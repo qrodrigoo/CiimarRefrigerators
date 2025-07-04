@@ -113,16 +113,35 @@ deleteForm.onsubmit = async (e) => {
   e.preventDefault();
   const id = deleteSelect.value;
   if (!id) return;
-  const { error } = await supabase.from("refrigerators").delete().eq("id", id);
-  if (error) {
-    alert("Error deleting fridge");
-    console.error(error);
-  } else {
-    deleteModal.classList.remove("show");
-    deleteForm.reset();
-    loadFridges();
+
+  const confirmDelete = confirm("Are you sure you want to delete this refrigerator? ALL associated data (samples, racks, etc.) will also be permanently deleted.");
+  if (!confirmDelete) return;
+
+  try {
+    // 1. Deletar todas as amostras associadas
+    await supabase.from("samples").delete().eq("refrigerator_id", id);
+
+    // 2. Deletar todos os racks associados
+    await supabase.from("racks").delete().eq("refrigerator_id", id);
+
+    // 3. Deletar a geladeira
+    const { error } = await supabase.from("refrigerators").delete().eq("id", id);
+
+    if (error) {
+      alert("Error deleting refrigerator.");
+      console.error(error);
+    } else {
+      alert("Refrigerator and all related data have been deleted successfully.");
+      deleteModal.classList.remove("show");
+      deleteForm.reset();
+      loadFridges();
+    }
+  } catch (err) {
+    alert("Unexpected error while deleting.");
+    console.error(err);
   }
 };
+
 
 // Inicializar
 loadFridges();
