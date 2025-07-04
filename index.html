@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laboratory Refrigerators</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="script.js" defer></script>
+</head>
+<body>
+  <div id="app">
+    <h1 class="title">Laboratory Refrigerators</h1>
+    <div class="grid" id="fridge-list"></div>
+
+    <div class="fab-menu">
+      <button id="toggle-menu">☰</button>
+      <div class="fab-options" id="fab-options">
+        <button id="add-btn">➕ Add</button>
+        <button id="rename-btn">✏️ Rename</button>
+        <button id="delete-btn">🗑 Delete</button>
+      </div>
+    </div>
+
+    <a href="./waiting/waiting-list.html" class="waiting-btn">Waiting list</a>
+
+    <div class="modal-overlay" id="add-modal">
+      <form class="modal" id="add-form">
+        <h2>New Refrigerator</h2>
+        <input type="text" placeholder="Ex: P2.12" id="add-label" required />
+        <div class="modal-actions">
+          <button type="button" class="cancel">Cancel</button>
+          <button type="submit">Add</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-overlay" id="rename-modal">
+      <form class="modal" id="rename-form">
+        <h2>Rename Refrigerator</h2>
+        <select id="rename-select" required></select>
+        <input type="text" placeholder="New label" id="new-label" required />
+        <div class="modal-actions">
+          <button type="button" class="cancel">Cancel</button>
+          <button type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-overlay" id="delete-modal">
+      <form class="modal" id="delete-form">
+        <h2 class="danger">Delete Refrigerator</h2>
+        <select id="delete-select" required></select>
+        <p>This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button type="button" class="cancel">Cancel</button>
+          <button type="submit" class="danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

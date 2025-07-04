@@ -1,0 +1,160 @@
+<!-- fridge.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fridge Page</title>
+  <link rel="stylesheet" href="fridge-style.css" />
+  <script type="module" src="fridge-script.js" defer></script>
+</head>
+<body>
+  <div class="fridge-container">
+    <div class="top-bar">
+      <button id="back-button" class="back-button">← Back</button>
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search by name, project and container type..."
+        class="search-input"
+      />
+    </div>
+
+    <div class="fridge-header">
+      <h1 id="fridge-label"></h1>
+    </div>
+
+    <div class="drawer-grid" id="drawer-grid"></div>
+
+    <p class="no-samples" id="no-samples" style="display: none">No samples found.</p>
+
+    <div class="fab-menu">
+      <button id="show-add-form" class="fab-button add">+</button>
+      <button id="show-rack-form" class="fab-button rack full">Add Rack</button>
+    </div>
+
+    <!-- Sample Detail Modal -->
+    <div class="modal-overlay" id="sample-detail-modal">
+      <div class="modal-form">
+        <h2>Sample Details</h2>
+        <div id="sample-details"></div>
+        <div class="modal-actions">
+          <button id="edit-sample" class="edit">Edit</button>
+          <button id="transfer-sample" class="transfer">Transfer</button>
+          <button id="delete-sample" class="delete">Delete</button>
+          <button id="close-sample-modal" class="close">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Sample Modal -->
+    <div class="modal-overlay" id="sample-form-modal">
+      <form class="modal-form" id="sample-form">
+        <h2 id="form-title">Add New Sample</h2>
+        <input type="text" placeholder="Name *" id="sample-name" required />
+        <input type="text" placeholder="Project *" id="sample-project" required />
+        <select id="sample-drawer" required>
+          <option value="">Drawer (1–4) *</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+        <input type="number" placeholder="Quantity *" id="sample-quantity" required />
+        <select id="sample-container-type" required>
+          <option value="">Container Type *</option>
+          <option value="Bolsa">Bolsa</option>
+          <option value="Caixa">Caixa</option>
+          <option value="Rack">Rack</option>
+        </select>
+        <!-- Container detail - aparece para Caixa/Bolsa -->
+        <input type="text" id="sample-detail" placeholder="Description (optional)" />
+
+        <!-- Se for rack -->
+        <select id="sample-rack" style="display: none;"></select>
+
+        <select id="sample-position" style="display: none;">
+          <option value="">Select Position</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+
+        <textarea placeholder="Observation" id="sample-observation"></textarea>
+        <div class="modal-actions">
+          <button type="button" id="cancel-form" class="cancel">Cancel</button>
+          <button type="submit" class="submit">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Add Rack Modal -->
+    <div class="modal-overlay" id="rack-form-modal">
+      <form class="modal-form" id="rack-form">
+        <h2>Add Rack</h2>
+        <input type="text" id="rack-name" placeholder="Rack Name" required />
+        <select id="rack-drawer" required>
+          <option value="">Select Drawer</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+        <div class="modal-actions">
+          <button type="button" id="cancel-rack" class="cancel">Cancel</button>
+          <button type="submit" class="submit">Add Rack</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div class="modal-overlay" id="transfer-modal">
+      <form class="modal-form" id="transfer-form">
+        <h2>Transfer Sample</h2>
+
+        <!-- Geladeira -->
+        <select id="transfer-fridge" required>
+          <option value="">Select Fridge</option>
+        </select>
+
+        <!-- Gaveta -->
+        <select id="transfer-drawer" required>
+          <option value="">Select Drawer</option>
+        </select>
+
+        <!-- Tipo -->
+        <select id="transfer-type" required>
+          <option value="">Select Storage Type</option>
+          <option value="Bolsa">Bolsa</option>
+          <option value="Caixa">Caixa</option>
+          <option value="Rack">Rack</option>
+        </select>
+
+        <textarea id="transfer-observation" placeholder="Observation" style="display: none"></textarea>
+
+        <!-- Rack (somente se escolhido "Rack") -->
+        <select id="transfer-rack" style="display: none;"></select>
+
+        <!-- Posição (somente se Rack for selecionado) -->
+        <select id="transfer-position" style="display: none;">
+          <option value="">Select Position</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+
+        <div class="modal-actions">
+          <button type="button" id="cancel-transfer" class="cancel">Cancel</button>
+          <button type="submit" class="submit">Confirm Transfer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+</body>
+</html>

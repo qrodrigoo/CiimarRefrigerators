@@ -1,0 +1,205 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom right, #b3e5fc);
+  padding: 24px;
+}
+
+/* Título */
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Grade de geladeiras */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+/* Cartão de geladeira */
+.card {
+  background-color: white;
+  padding: 16px;
+  width: 190px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card h3 {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.card .bar {
+  height: 48px;
+  background-color: #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* FAB menu */
+.fab-menu {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 100;
+}
+
+.fab-options {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fab-options.show {
+  display: flex;
+}
+
+.fab-menu button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 9999px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#toggle-menu {
+  background-color: #374151;
+}
+
+#add-btn {
+  background-color: #2563eb;
+}
+
+#rename-btn {
+  background-color: #f59e0b;
+}
+
+#delete-btn {
+  background-color: #dc2626;
+}
+
+/* Modais */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  padding: 24px;
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.modal h2.danger {
+  color: #dc2626;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.modal p {
+  font-size: 14px;
+  text-align: center;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions .cancel {
+  background: #e5e7eb;
+  color: #333;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-actions .danger {
+  background: #dc2626;
+  color: white;
+}
+
+.modal-actions .cancel:hover {
+  background: #d1d5db;
+}
+
+.modal-actions .danger:hover {
+  background: #b91c1c;
+}
+
+.waiting-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: background-color 0.2s ease;
+}
+
+.waiting-btn:hover {
+  background-color: #2563eb;
+}
+
+

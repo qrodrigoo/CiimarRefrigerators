@@ -1,0 +1,97 @@
+/* Layout principal */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #f9fafb;
+}
+
+.waiting-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Lista de solicitações */
+.waiting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Cartão de cada item */
+.waiting-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f3f4f6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.waiting-card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.waiting-card p {
+  margin: 4px 0;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.waiting-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.waiting-actions button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.accept-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.reject-btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.accept-btn:hover {
+  background-color: #059669;
+}
+
+.reject-btn:hover {
+  background-color: #dc2626;
+}
+
+.back-button {
+  background-color: #d1d5db;
+  color: #111827;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  margin: 20px;
+}
+
+.back-button:hover {
+  background-color: #9ca3af;
+}

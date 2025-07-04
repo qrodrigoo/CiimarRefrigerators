@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rack View</title>
+  <link rel="stylesheet" href="rack-style.css" />
+</head>
+<body>
+  <div class="rack-container">
+    <div class="top-bar">
+        <button id="back-button" class="back-button">← Back</button>
+        <h1 id="rack-title">Rack</h1>
+        <button id="delete-rack" class="delete-rack-button">🗑️ Delete Rack</button>
+    </div>
+
+    <div class="rack-grid" id="rack-grid"></div>
+    <p class="no-samples" id="no-samples" style="display: none">No samples found in this rack.</p>
+  </div>
+
+  <!-- Sample Detail Modal -->
+    <div class="modal-overlay" id="sample-detail-modal">
+    <div class="modal-form">
+        <h2>Sample Details</h2>
+        <div id="sample-details"></div>
+        <div class="modal-actions">
+        <button id="edit-sample" class="edit">Edit</button>
+        <button id="transfer-sample" class="transfer">Transfer</button>
+        <button id="delete-sample" class="delete">Delete</button>
+        <button id="close-sample-modal" class="close">Close</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Transfer Modal -->
+<div class="modal-overlay" id="transfer-modal">
+  <form class="modal-form" id="transfer-form">
+    <h2>Transfer Sample</h2>
+
+    <!-- Geladeira -->
+    <select id="transfer-fridge" required>
+      <option value="">Select Fridge</option>
+    </select>
+
+    <!-- Gaveta -->
+    <select id="transfer-drawer" required>
+      <option value="">Select Drawer</option>
+    </select>
+
+    <!-- Tipo -->
+    <select id="transfer-type" required>
+      <option value="">Select Storage Type</option>
+      <option value="Bolsa">Bolsa</option>
+      <option value="Caixa">Caixa</option>
+      <option value="Rack">Rack</option>
+    </select>
+
+    <textarea id="transfer-observation" placeholder="Observation" style="display: none"></textarea>
+
+    <!-- Rack (somente se escolhido "Rack") -->
+    <select id="transfer-rack" style="display: none;"></select>
+
+    <!-- Posição (somente se Rack for selecionado) -->
+    <select id="transfer-position" style="display: none;">
+      <option value="">Select Position</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <div class="modal-actions">
+      <button type="button" id="cancel-transfer" class="cancel">Cancel</button>
+      <button type="submit" class="submit">Confirm Transfer</button>
+    </div>
+  </form>
+</div>
+
+
+
+
+</body>
+  <script type="module" src="rack-script.js" defer></script>
+</html>

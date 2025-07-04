@@ -1,0 +1,382 @@
+
+/* Layout geral */
+.fridge-container {
+  min-height: 100vh;
+  background-color: #eff6ff;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+/* Topo: botão + busca */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background-color: #d1d5db;
+  color: #111827;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #9ca3af;
+}
+
+.search-input {
+  flex: 1;
+  margin-left: 20px;
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Título da geladeira */
+.fridge-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.fridge-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Grade das amostras */
+.sample-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 50px;
+}
+
+.sample-card {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.sample-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sample-card p {
+  margin: 0;
+  color: #6b7280;
+}
+
+/* Texto de nenhum resultado */
+.no-samples {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+/* Menu flutuante */
+.fab-menu {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.fab-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.fab-button.add {
+  background-color: #10b981;
+}
+
+.fab-button.edit {
+  background-color: #3b82f6;
+}
+
+.fab-button.delete {
+  background-color: #ef4444;
+}
+
+.fab-button:hover {
+  opacity: 0.9;
+}
+
+/* Modal de formulário */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-overlay.show {
+  display: flex; /* Só mostra quando adiciona a classe "show" */
+}
+
+.modal-form {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form h2 {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.modal-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions .cancel {
+  background-color: #e5e7eb;
+  color: #111827;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .submit {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .cancel:hover {
+  background-color: #d1d5db;
+}
+
+.modal-actions .submit:hover {
+  background-color: #059669;
+}
+
+.fab-dropdown {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.fab-main {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.fab-options {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fab-options button {
+  padding: 8px 12px;
+  background: white;
+  border: none;
+  text-align: left;
+  width: 160px;
+  cursor: pointer;
+}
+
+.fab-options button:hover {
+  background-color: #f0f0f0;
+}
+
+.sample-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.sample-actions button {
+  background-color: #f3f4f6;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sample-actions button:hover {
+  background-color: #e5e7eb;
+}
+
+/* Modal de detalhes da amostra */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.modal-actions .edit {
+  background-color: #10b981; /* verde */
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .delete {
+  background-color: #ef4444; /* vermelho */
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .close {
+  background-color: #e5e7eb; /* cinza claro */
+  color: black;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.drawer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem; /* Aqui define o espaçamento entre as amostras */
+}
+
+
+.drawer-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+}
+
+.sample-card {
+  transition: transform 0.2s ease;
+}
+
+.sample-card:hover {
+  transform: scale(1.03); /* aumenta levemente */
+}
+
+.fab-button.add {
+  background-color: #28a745;
+}
+
+.fab-button.add:hover {
+  background-color: #28a745;
+  transform: scale(1.05);
+}
+
+.fab-button.rack.full {
+  border-radius: 24px;
+  width: auto;
+  padding: 0 16px;
+  height: 48px;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.fab-button.rack.full:hover {
+  background-color: #2563eb;
+  transform: scale(1.05);
+}
+
+
+
+.rack-card {
+  border: 2px dashed #007bff;
+  background-color: #f5faff;
+}
+
+.drawer-column {
+  margin-bottom: 20px;
+}
+
+.sample-card + .sample-card {
+  margin-top: 5px;
+}
+
+.modal-actions .transfer {
+  background-color: #3b82f6; /* Azul */
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
