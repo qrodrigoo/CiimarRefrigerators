@@ -68,10 +68,11 @@ sampleForm.onsubmit = async (e) => {
     drawer: drawerSelect.value,
     quantity: quantityInput.value,
     container_type: type,
-    container_detail,
-    observation: obsInput.value,
+    container_detail: container_detail || '---',
+    observation: obsInput.value || '---',
     refrigerator_id: fridgeId
-  };
+};
+
 
   if (formTitle.textContent.includes("Edit")) {
     await supabase.from("samples").update(payload).eq("id", selectedSample.id);
@@ -87,7 +88,7 @@ sampleForm.onsubmit = async (e) => {
 
 
 
-let allSamples = [], racks = [], selectedSample = null, fridge = null;
+let allSamples = [], racks = [], selectedSample = null, fridge = null, fridgeName = "";
 
 backButton.onclick = () => window.location.href = "../index.html";
 
@@ -218,6 +219,15 @@ function openForm(sample = null) {
 }
 
 function render() {
+
+  // Adicione isso dentro da função render()
+  closeDetailBtn.onclick = () => {
+    sampleDetailModal.style.display = "none";
+    const url = new URL(window.location.href);
+    url.searchParams.delete("sample");
+    window.history.replaceState({}, "", url);
+  };
+
   const filter = searchInput.value.toLowerCase();
   drawerGrid.innerHTML = "";
   const filtered = allSamples.filter(s =>
@@ -246,16 +256,18 @@ function render() {
       card.innerHTML = `<h3>${s.name}</h3><p>${s.project}</p>`;
       card.onclick = () => {
         selectedSample = s;
+
         sampleDetails.innerHTML = `
           <p><strong>Name:</strong> ${s.name}</p>
           <p><strong>Project:</strong> ${s.project}</p>
+          <p><strong>Fridge:</strong> ${fridgeName}</p>
           <p><strong>Drawer:</strong> ${s.drawer}</p>
           <p><strong>Quantity:</strong> ${s.quantity}</p>
           <p><strong>Container Type:</strong> ${s.container_type}</p>
           <p><strong>Container Detail:</strong> ${s.container_detail}</p>
           <p><strong>Observation:</strong> ${s.observation}</p>
         `;
-        sampleDetailModal.classList.add("show");
+        sampleDetailModal.style.display = "flex";
       };
       col.appendChild(card);
     });
@@ -274,8 +286,14 @@ function render() {
 }
 
 async function loadFridge() {
-  const { data } = await supabase.from("refrigerators").select("*").eq("id", fridgeId).single();
+  const { data } = await supabase
+    .from("refrigerators")
+    .select("*")
+    .eq("id", fridgeId)
+    .single();
+
   fridge = data;
+  fridgeName = fridge.label;
   fridgeLabel.textContent = fridge.label;
 }
 
@@ -288,6 +306,39 @@ async function loadSamples() {
 
   allSamples = data || [];
   render();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const sampleIdFromUrl = urlParams.get("sample");
+
+  // Após carregar os samples:
+  if (sampleIdFromUrl) {
+      const selected = allSamples.find(s => s.id === sampleIdFromUrl);    if (selected) {
+      selectedSample = selected;
+
+      // Atualiza o modal com os detalhes
+      sampleDetails.innerHTML = `
+        <p><strong>Name:</strong> ${selected.name}</p>
+        <p><strong>Project:</strong> ${selected.project}</p>
+        <p><strong>Fridge:</strong> ${fridgeName}</p>
+        <p><strong>Drawer:</strong> ${selected.drawer}</p>
+        <p><strong>Quantity:</strong> ${selected.quantity}</p>
+        <p><strong>Container Type:</strong> ${selected.container_type}</p>
+        <p><strong>Container Detail:</strong> ${selected.container_detail}</p>
+        <p><strong>Observation:</strong> ${selected.observation}</p>
+      `;
+      sampleDetailModal.style.display = "flex";
+
+      // Garante que o botão close funcione mesmo se veio pela URL
+      closeDetailBtn.onclick = () => {
+        sampleDetailModal.style.display = "none";
+
+        // Remove o parâmetro 'sample' da URL sem recarregar a página
+        const url = new URL(window.location.href);
+        url.searchParams.delete("sample");
+        window.history.replaceState({}, "", url);
+      };
+    }
+  }
 }
 
 async function loadRacks() {

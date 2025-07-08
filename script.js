@@ -142,6 +142,97 @@ deleteForm.onsubmit = async (e) => {
   }
 };
 
+const globalSearch = document.getElementById("global-search");
+const autocompleteList = document.getElementById("autocomplete-list");
 
-// Inicializar
+let allSamples = [];
+let allRacks = [];
+let allFridges = [];
+
+async function loadAllSamples() {
+  const { data } = await supabase
+    .from("samples")
+    .select("*")
+    .or("marked_for_deletion.is.null,marked_for_deletion.eq.false");
+  allSamples = data || [];
+}
+
+async function loadAllRacks() {
+  const { data } = await supabase.from("racks").select("*");
+  allRacks = data || [];
+}
+
+async function loadAllFridges() {
+  const { data } = await supabase.from("refrigerators").select("*");
+  allFridges = data || [];
+}
+
+function filterSamples(term) {
+  return allSamples.filter(sample =>
+    sample.name.toLowerCase().includes(term) ||
+    sample.project.toLowerCase().includes(term)
+  );
+}
+
+globalSearch.addEventListener("input", () => {
+  const term = globalSearch.value.toLowerCase().trim();
+  autocompleteList.innerHTML = "";
+
+  if (!term) return;
+
+  const sampleResults = filterSamples(term);
+  const fridgeResults = allFridges.filter(fridge =>
+    fridge.label.toLowerCase().includes(term)
+  );
+
+  const combinedResults = [
+    ...sampleResults.map(sample => ({ type: "sample", item: sample })),
+    ...fridgeResults.map(fridge => ({ type: "fridge", item: fridge }))
+  ].slice(0, 10);
+
+  combinedResults.forEach(({ type, item }) => {
+    const li = document.createElement("li");
+
+    if (type === "sample") {
+      li.textContent = `${item.name} (${item.project})`;
+      li.onclick = () => {
+        const detail = item.container_detail;
+        if (item.container_type === "Rack" && detail) {
+          const rackName = detail.replace(/[1-5]$/, "");
+          const drawer = item.drawer;
+          const rack = allRacks.find(r =>
+            r.name === rackName &&
+            String(r.drawer) === String(drawer) &&
+            r.refrigerator_id === item.refrigerator_id
+          );
+          if (rack) {
+            window.location.href = `rack/rack.html?id=${rack.id}&sample=${item.id}`;
+          } else {
+            alert("Rack não encontrado.");
+          }
+        } else {
+          window.location.href = `fridge/fridge.html?id=${item.refrigerator_id}&sample=${item.id}`;
+        }
+      };
+    } else {
+      li.textContent = `Fridge: ${item.label}`;
+      li.onclick = () => {
+        window.location.href = `fridge/fridge.html?id=${item.id}`;
+      };
+    }
+
+    autocompleteList.appendChild(li);
+  });
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-container")) {
+    autocompleteList.innerHTML = "";
+  }
+});
+
+
+loadAllSamples();
+loadAllRacks();
+loadAllFridges();
 loadFridges();

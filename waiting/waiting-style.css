@@ -95,3 +95,8 @@ h1 {
 .back-button:hover {
   background-color: #9ca3af;
 }
+
+.waiting-card p {
+  line-height: 1;
+  margin: 0.5px 0;
+}

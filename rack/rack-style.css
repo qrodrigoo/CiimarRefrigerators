@@ -131,7 +131,6 @@ body {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
 }
 
 .modal-actions .edit {
@@ -247,5 +246,84 @@ body {
 }
 
 #transfer-modal .modal-actions .submit:hover {
+  background-color: #059669;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-form {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  max-width: 400px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form h2 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-actions .cancel {
+  background-color: #e5e7eb;
+  color: #111827;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .submit {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .cancel:hover {
+  background-color: #d1d5db;
+}
+
+.modal-actions .submit:hover {
   background-color: #059669;
 }

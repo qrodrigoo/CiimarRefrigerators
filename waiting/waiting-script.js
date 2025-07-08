@@ -6,6 +6,17 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const listContainer = document.getElementById("waiting-list");
 
+let refrigerators = [];
+
+async function loadRefrigerators() {
+  const { data, error } = await supabase.from("refrigerators").select("*");
+  if (error) {
+    console.error("Erro ao carregar geladeiras:", error);
+    return;
+  }
+  refrigerators = data;
+}
+
 async function loadWaitingList() {
   const { data, error } = await supabase
     .from("waiting_list")
@@ -25,11 +36,22 @@ async function loadWaitingList() {
 
     const sample = item.original_data || item.samples || {};
 
+    const fridgeOriginId = sample.refrigerator_id || item.original_data?.refrigerator_id;
+    const fridgeTargetId = item.target_fridge;
+
+    const originFridge = refrigerators.find(f => f.id === fridgeOriginId);
+    const targetFridge = refrigerators.find(f => f.id === fridgeTargetId);
+
+    const originFridgeLabel = originFridge?.label || "---";
+    const targetFridgeLabel = targetFridge?.label || "---";
+
     card.innerHTML = `
-      <h3>${sample.name || "Unknown Sample"}</h3>
-      <p><strong>Action:</strong> ${item.action_type}</p>
-      <p><strong>Target:</strong> ${formatTarget(item)}</p>
-      <p><strong>Observation:</strong> ${sample.observation || "-"}</p>
+      <h3>${sample.name || "Unknown Sample"}</h3>
+      <p><strong>Action:</strong> ${item.action_type}</p>
+      <p><strong>From:</strong> ${originFridgeLabel}</p>
+      ${item.action_type === "transfer" ? `<p><strong>To:</strong> ${targetFridgeLabel}</p>` : ""}
+      <p><strong>Target:</strong> ${formatTarget(item)}</p>
+      <p><strong>Observation:</strong> ${sample.observation || "-"}</p>
     `;
 
     const actions = document.createElement("div");
@@ -89,6 +111,7 @@ async function handleAccept(item) {
     await supabase.from("waiting_list").update({ status: "approved" }).eq("id", item.id);
   }
 
+  await loadRefrigerators();
   await loadWaitingList();
 }
 
@@ -122,9 +145,13 @@ async function handleReject(id) {
   // Remove da lista de espera
   await supabase.from("waiting_list").delete().eq("id", id);
 
+  await loadRefrigerators();
   await loadWaitingList();
 }
 
 
 
-loadWaitingList();
+(async () => {
+  await loadRefrigerators();   // Garante que os dados das geladeiras venham primeiro
+  await loadWaitingList();     // Agora sim pode carregar a lista com os nomes corretos
+})();

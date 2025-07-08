@@ -8,8 +8,22 @@
   <script type="module" src="script.js" defer></script>
 </head>
 <body>
+
+  <table class="layout-table">
+    <tr>
+      <td>
+        <h1 class="title">Laboratory Refrigerators</h1>
+      </td>
+      <td>
+        <div class="search-container">
+          <input type="text" id="global-search" placeholder="Search by name, project and fridge..." />
+          <ul id="autocomplete-list" class="autocomplete-list"></ul>
+        </div>
+      </td>
+    </tr>
+  </table>
+
   <div id="app">
-    <h1 class="title">Laboratory Refrigerators</h1>
     <div class="grid" id="fridge-list"></div>
 
     <div class="fab-menu">

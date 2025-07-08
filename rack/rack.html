@@ -77,6 +77,63 @@
   </form>
 </div>
 
+<!-- Modal de Formulário -->
+<div id="sample-form-modal" class="modal-overlay">
+  <form id="sample-form" class="modal-form">
+
+    <h2 id="form-title">Edit Sample</h2>
+
+    <input type="text" id="sample-name" placeholder="Name" required />
+    <input type="text" id="sample-project" placeholder="Project" />
+    <input type="number" id="sample-quantity" placeholder="Quantity" required />
+    <input type="text" id="sample-observation" placeholder="Observation" />
+
+    <!-- Gaveta -->
+    <select id="sample-drawer" required>
+      <option value="">Select Drawer</option>
+      <option value="1">Drawer 1</option>
+      <option value="2">Drawer 2</option>
+      <option value="3">Drawer 3</option>
+      <option value="4">Drawer 4</option>
+    </select>
+
+    <!-- Tipo -->
+    <select id="sample-container-type" required>
+      <option value="">Select Storage Type</option>
+      <option value="Bag">Bag</option>
+      <option value="Box">Box</option>
+      <option value="Rack">Rack</option>
+    </select>
+
+    <!-- Container detail (se não for rack) -->
+    <input type="text" id="sample-detail" placeholder="Container Detail" />
+
+    <!-- Rack e posição (só se for rack) -->
+    <select id="sample-rack" style="display: none;">
+      <option value="">Select Rack</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+    </select>
+
+    <select id="sample-position" style="display: none;">
+      <option value="">Select Position</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <div class="modal-actions">
+      <button type="button" class="close" id="cancel-form">Cancel</button> 
+      <button type="submit" class="edit">Save</button>
+    </div>
+  </form>
+</div>
+
+
 
 
 

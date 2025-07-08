@@ -18,9 +18,25 @@ const closeDetailBtn = document.getElementById("close-sample-modal");
 const deleteSampleBtn = document.getElementById("delete-sample");
 const editSampleBtn = document.getElementById("edit-sample");
 
+const sampleFormModal = document.getElementById("sample-form-modal");
+const sampleForm = document.getElementById("sample-form");
+const formTitle = document.getElementById("form-title");
+const nameInput = document.getElementById("sample-name");
+const projectInput = document.getElementById("sample-project");
+const quantityInput = document.getElementById("sample-quantity");
+const obsInput = document.getElementById("sample-observation");
+const cancelFormBtn = document.getElementById("cancel-form");
+
+const detailInput = document.getElementById("sample-detail");
+const sampleRackSelect = document.getElementById("sample-rack");
+const samplePositionSelect = document.getElementById("sample-position");
+const sampleDrawerSelect = document.getElementById("sample-drawer");
+
+
 let samples = [];
 let rack = null;
 let selectedSample = null;
+let fridgeName = "Unknown";
 
 backButton.onclick = () => history.back();
 deleteRackBtn.onclick = async () => {
@@ -64,7 +80,14 @@ deleteRackBtn.onclick = async () => {
 
 
 
-closeDetailBtn.onclick = () => (sampleDetailModal.style.display = "none");
+closeDetailBtn.onclick = () => {
+  sampleDetailModal.style.display = "none";
+
+  // Remove o parâmetro 'sample' da URL
+  const url = new URL(window.location.href);
+  url.searchParams.delete("sample");
+  window.history.replaceState({}, "", url);
+};
 
 deleteRackBtn.onclick = async () => {
   const confirmDelete = confirm("Are you sure you want to delete this rack and all its samples?");
@@ -87,13 +110,30 @@ deleteRackBtn.onclick = async () => {
 
 
 editSampleBtn.onclick = () => {
-  alert("A funcionalidade de edição pode ser implementada depois aqui também.");
+  if (!selectedSample) return;
+  openForm(selectedSample);
 };
 
+
+
 async function loadRack() {
-  const { data } = await supabase.from("racks").select("*").eq("id", rackId).single();
+  const { data } = await supabase
+    .from("racks")
+    .select("*")
+    .eq("id", rackId)
+    .single();
+
   rack = data;
   rackTitle.textContent = `Rack ${rack.name}`;
+
+  // Após pegar o rack:
+  const fridgeResult = await supabase
+    .from("refrigerators")
+    .select("label")
+    .eq("id", rack.refrigerator_id)
+    .single();
+
+    fridgeName = fridgeResult?.data?.label || "Unknown";
 }
 
 async function loadSamples() {
@@ -111,7 +151,33 @@ async function loadSamples() {
   );
 
   render();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const sampleIdFromUrl = urlParams.get("sample");
+
+  // Após carregar os samples:
+  if (sampleIdFromUrl) {
+    const selected = samples.find(s => s.id === sampleIdFromUrl);
+    if (selected) {
+      selectedSample = selected;
+
+      // Atualiza o modal com os detalhes
+      sampleDetails.innerHTML = `
+        <p><strong>Name:</strong> ${selected.name}</p>
+        <p><strong>Project:</strong> ${selected.project}</p>
+        <p><strong>Fridge:</strong> ${fridgeName}</p>
+        <p><strong>Drawer:</strong> ${selected.drawer}</p>
+        <p><strong>Quantity:</strong> ${selected.quantity}</p>
+        <p><strong>Container Type:</strong> ${selected.container_type}</p>
+        <p><strong>Container Detail:</strong> ${selected.container_detail}</p>
+        <p><strong>Observation:</strong> ${selected.observation}</p>
+      `;
+      sampleDetailModal.style.display = "flex";
+    }
+  }
 }
+
+
 
 
 function render() {
@@ -140,6 +206,7 @@ function render() {
         sampleDetails.innerHTML = `
           <p><strong>Name:</strong> ${s.name}</p>
           <p><strong>Project:</strong> ${s.project}</p>
+          <p><strong>Fridge:</strong> ${fridgeName}</p>
           <p><strong>Drawer:</strong> ${s.drawer}</p>
           <p><strong>Quantity:</strong> ${s.quantity}</p>
           <p><strong>Container Type:</strong> ${s.container_type}</p>
@@ -269,6 +336,106 @@ transferForm.onsubmit = async (e) => {
   transferModal.style.display = "none";
   sampleDetailModal.style.display = "none";
 };
+
+deleteSampleBtn.onclick = async () => {
+  if (!selectedSample) return;
+  const confirmDelete = confirm("Do you want to request deletion of this sample?");
+  if (!confirmDelete) return;
+
+  await supabase.from("waiting_list").insert({
+    sample_id: selectedSample.id,
+    action_type: "delete",
+    status: "pending",
+    original_data: selectedSample
+  });
+
+  await supabase.from("samples")
+    .update({ marked_for_deletion: true })
+    .eq("id", selectedSample.id);
+
+  sampleDetailModal.style.display = "none";
+  await loadSamples();
+};
+
+async function openForm(sample = null) {
+  sampleFormModal.style.display = "flex"; // Mostra o modal ANTES
+
+  if (sample) {
+    formTitle.textContent = "Edit Sample";
+    nameInput.value = sample.name;
+    projectInput.value = sample.project;
+    quantityInput.value = sample.quantity;
+    obsInput.value = sample.observation;
+    sampleDrawerSelect.value = sample.drawer;
+
+    editTypeSelect.value = sample.container_type;
+    editTypeSelect.dispatchEvent(new Event("change"));
+
+    if (sample.container_type === "Rack") {
+      const rackLetter = sample.container_detail?.charAt(0);
+      const position = sample.container_detail?.slice(1);
+
+      sampleRackSelect.value = rackLetter || "";
+      samplePositionSelect.value = position || "";
+
+      sampleRackSelect.style.display = "block";
+      samplePositionSelect.style.display = "block";
+      detailInput.style.display = "none";
+    } else {
+      detailInput.value = sample.container_detail || "";
+      sampleRackSelect.style.display = "none";
+      samplePositionSelect.style.display = "none";
+      detailInput.style.display = "block";
+    }
+
+    selectedSample = sample;
+  } else {
+    formTitle.textContent = "Add Sample";
+    sampleForm.reset();
+    selectedSample = null;
+    sampleRackSelect.style.display = "none";
+    samplePositionSelect.style.display = "none";
+    detailInput.style.display = "block";
+  }
+}
+
+const editTypeSelect = document.getElementById("sample-container-type");
+
+cancelFormBtn.onclick = () => {
+  sampleFormModal.style.display = "none";
+  sampleForm.reset();
+};
+
+sampleForm.onsubmit = async (e) => {
+  e.preventDefault();
+
+  const type = typeSelect.value;
+  const container_detail =
+    type === "Rack"
+      ? `${sampleRackSelect.value}${samplePositionSelect.value}`
+      : detailInput.value || null;
+
+  const payload = {
+    name: nameInput.value,
+    project: projectInput.value,
+    drawer: sampleDrawerSelect.value,
+    quantity: quantityInput.value,
+    container_type: type,
+    container_detail,
+    observation: obsInput.value
+  };
+
+  if (selectedSample) {
+    await supabase.from("samples").update(payload).eq("id", selectedSample.id);
+  }
+
+  sampleFormModal.style.display = "none";
+  sampleForm.reset();
+  await loadSamples();
+};
+
+
+
 
 
 async function init() {
