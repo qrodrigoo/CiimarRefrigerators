@@ -243,7 +243,7 @@ function render() {
     col.className = "drawer-column";
     const title = document.createElement("h2");
     title.className = "drawer-title";
-    title.textContent = `Gaveta ${drawer}`;
+    title.textContent = `Drawer ${drawer}`;
     col.appendChild(title);
 
     const samples = filtered.filter(s =>
