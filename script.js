@@ -21,13 +21,37 @@ const renameForm = document.getElementById("rename-form");
 const deleteForm = document.getElementById("delete-form");
 
 const addLabelInput = document.getElementById("add-label");
+const addDrawerCountInput = document.getElementById("add-drawer-count");
 const renameSelect = document.getElementById("rename-select");
 const renameInput = document.getElementById("new-label");
 const deleteSelect = document.getElementById("delete-select");
 
 let refrigerators = [];
 
-// Load fridges
+// ─── Custom Confirm Modal ─────────────────────────────────────────
+let _confirmResolve = null;
+
+function showConfirm(message, confirmLabel = "Confirm", title = "Confirm") {
+  return new Promise(resolve => {
+    _confirmResolve = resolve;
+    document.getElementById("confirm-title").textContent = title;
+    document.getElementById("confirm-message").textContent = message;
+    document.getElementById("confirm-ok-btn").textContent = confirmLabel;
+    document.getElementById("confirm-modal").classList.add("show");
+  });
+}
+
+document.getElementById("confirm-ok-btn").onclick = () => {
+  document.getElementById("confirm-modal").classList.remove("show");
+  if (_confirmResolve) { _confirmResolve(true); _confirmResolve = null; }
+};
+
+document.getElementById("confirm-cancel-btn").onclick = () => {
+  document.getElementById("confirm-modal").classList.remove("show");
+  if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
+};
+
+// ─── Load & Render Fridges ────────────────────────────────────────
 async function loadFridges() {
   const { data, error } = await supabase.from("refrigerators").select();
   if (error) {
@@ -43,12 +67,14 @@ function renderFridges() {
   fridgeList.innerHTML = "";
   renameSelect.innerHTML = "<option value='' disabled selected>Select a refrigerator</option>";
   deleteSelect.innerHTML = "<option value='' disabled selected>Select a refrigerator</option>";
+
   refrigerators.forEach((fridge) => {
+    const drawerCount = fridge.drawer_count || 4;
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
       <h3>${fridge.label}</h3>
-      ${Array(4).fill("<div class='bar'></div>").join("")}
+      ${Array(drawerCount).fill("<div class='bar'></div>").join("")}
     `;
     card.onclick = () => {
       window.location.href = `./fridge/fridge.html?id=${fridge.id}`;
@@ -60,38 +86,38 @@ function renderFridges() {
   });
 }
 
-// FAB menu toggle
+// ─── FAB Menu ────────────────────────────────────────────────────
 fabMenuBtn.onclick = () => {
   fabOptions.classList.toggle("show");
 };
 
-// Show modals
 addBtn.onclick = () => addModal.classList.add("show");
 renameBtn.onclick = () => renameModal.classList.add("show");
 deleteBtn.onclick = () => deleteModal.classList.add("show");
 
-// Cancel buttons
 addForm.querySelector(".cancel").onclick = () => addModal.classList.remove("show");
 renameForm.querySelector(".cancel").onclick = () => renameModal.classList.remove("show");
 deleteForm.querySelector(".cancel").onclick = () => deleteModal.classList.remove("show");
 
-// Add fridge
+// ─── Add Fridge ──────────────────────────────────────────────────
 addForm.onsubmit = async (e) => {
   e.preventDefault();
   const label = addLabelInput.value.trim();
   if (!label) return;
-  const { error } = await supabase.from("refrigerators").insert({ label });
+  const drawer_count = parseInt(addDrawerCountInput.value) || 4;
+  const { error } = await supabase.from("refrigerators").insert({ label, drawer_count });
   if (error) {
     alert("Error adding fridge");
     console.error(error);
   } else {
     addModal.classList.remove("show");
     addForm.reset();
+    addDrawerCountInput.value = 4;
     loadFridges();
   }
 };
 
-// Rename fridge
+// ─── Rename Fridge ───────────────────────────────────────────────
 renameForm.onsubmit = async (e) => {
   e.preventDefault();
   const id = renameSelect.value;
@@ -108,23 +134,20 @@ renameForm.onsubmit = async (e) => {
   }
 };
 
-// Delete fridge
+// ─── Delete Fridge ───────────────────────────────────────────────
 deleteForm.onsubmit = async (e) => {
   e.preventDefault();
   const id = deleteSelect.value;
   if (!id) return;
 
-  const confirmDelete = confirm("Are you sure you want to delete this refrigerator? ALL associated data (samples, racks, etc.) will also be permanently deleted.");
+  const confirmDelete = await showConfirm("Are you sure? ALL associated data (samples, racks, boxes, etc.) will also be permanently deleted.", "Delete", "Delete Refrigerator");
   if (!confirmDelete) return;
 
   try {
-    // 1. Deletar todas as amostras associadas
     await supabase.from("samples").delete().eq("refrigerator_id", id);
-
-    // 2. Deletar todos os racks associados
     await supabase.from("racks").delete().eq("refrigerator_id", id);
+    await supabase.from("boxes").delete().eq("refrigerator_id", id);
 
-    // 3. Deletar a geladeira
     const { error } = await supabase.from("refrigerators").delete().eq("id", id);
 
     if (error) {
@@ -142,6 +165,7 @@ deleteForm.onsubmit = async (e) => {
   }
 };
 
+// ─── Global Search ────────────────────────────────────────────────
 const globalSearch = document.getElementById("global-search");
 const autocompleteList = document.getElementById("autocomplete-list");
 
@@ -163,8 +187,8 @@ async function loadAllRacks() {
 }
 
 async function loadAllFridges() {
-  const { data } = await supabase.from("refrigerators").select("*");
-  allFridges = data || [];
+  const { data } = await supabase.from("refrigerators").select("*");
+  allFridges = data || [];
 }
 
 function filterSamples(term) {
@@ -175,54 +199,54 @@ function filterSamples(term) {
 }
 
 globalSearch.addEventListener("input", () => {
-  const term = globalSearch.value.toLowerCase().trim();
-  autocompleteList.innerHTML = "";
+  const term = globalSearch.value.toLowerCase().trim();
+  autocompleteList.innerHTML = "";
 
-  if (!term) return;
+  if (!term) return;
 
-  const sampleResults = filterSamples(term);
-  const fridgeResults = allFridges.filter(fridge =>
-    fridge.label.toLowerCase().includes(term)
-  );
+  const sampleResults = filterSamples(term);
+  const fridgeResults = allFridges.filter(fridge =>
+    fridge.label.toLowerCase().includes(term)
+  );
 
-  const combinedResults = [
-    ...sampleResults.map(sample => ({ type: "sample", item: sample })),
-    ...fridgeResults.map(fridge => ({ type: "fridge", item: fridge }))
-  ].slice(0, 10);
+  const combinedResults = [
+    ...sampleResults.map(sample => ({ type: "sample", item: sample })),
+    ...fridgeResults.map(fridge => ({ type: "fridge", item: fridge }))
+  ].slice(0, 10);
 
-  combinedResults.forEach(({ type, item }) => {
-    const li = document.createElement("li");
+  combinedResults.forEach(({ type, item }) => {
+    const li = document.createElement("li");
 
-    if (type === "sample") {
-      li.textContent = `${item.name} (${item.project})`;
-      li.onclick = () => {
-        const detail = item.container_detail;
-        if (item.container_type === "Rack" && detail) {
-          const rackName = detail.replace(/[1-5]$/, "");
-          const drawer = item.drawer;
-          const rack = allRacks.find(r =>
-            r.name === rackName &&
-            String(r.drawer) === String(drawer) &&
-            r.refrigerator_id === item.refrigerator_id
-          );
-          if (rack) {
-            window.location.href = `rack/rack.html?id=${rack.id}&sample=${item.id}`;
-          } else {
-            alert("Rack não encontrado.");
-          }
-        } else {
-          window.location.href = `fridge/fridge.html?id=${item.refrigerator_id}&sample=${item.id}`;
-        }
-      };
-    } else {
-      li.textContent = `Fridge: ${item.label}`;
-      li.onclick = () => {
-        window.location.href = `fridge/fridge.html?id=${item.id}`;
-      };
-    }
+    if (type === "sample") {
+      li.textContent = `${item.name} (${item.project})`;
+      li.onclick = () => {
+        const detail = item.container_detail;
+        if (item.container_type === "Rack" && detail) {
+          const rackName = detail.replace(/[1-5]$/, "");
+          const drawer = item.drawer;
+          const rack = allRacks.find(r =>
+            r.name === rackName &&
+            String(r.drawer) === String(drawer) &&
+            r.refrigerator_id === item.refrigerator_id
+          );
+          if (rack) {
+            window.location.href = `rack/rack.html?id=${rack.id}&sample=${item.id}`;
+          } else {
+            alert("Rack not found.");
+          }
+        } else {
+          window.location.href = `fridge/fridge.html?id=${item.refrigerator_id}&sample=${item.id}`;
+        }
+      };
+    } else {
+      li.textContent = `Fridge: ${item.label}`;
+      li.onclick = () => {
+        window.location.href = `fridge/fridge.html?id=${item.id}`;
+      };
+    }
 
-    autocompleteList.appendChild(li);
-  });
+    autocompleteList.appendChild(li);
+  });
 });
 
 document.addEventListener("click", (e) => {
@@ -230,7 +254,6 @@ document.addEventListener("click", (e) => {
     autocompleteList.innerHTML = "";
   }
 });
-
 
 loadAllSamples();
 loadAllRacks();

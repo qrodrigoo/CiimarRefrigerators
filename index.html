@@ -41,6 +41,14 @@
       <form class="modal" id="add-form">
         <h2>New Refrigerator</h2>
         <input type="text" placeholder="Ex: P2.12" id="add-label" required />
+        <input
+          type="number"
+          placeholder="Number of Drawers (default: 4)"
+          id="add-drawer-count"
+          min="1"
+          max="20"
+          value="4"
+        />
         <div class="modal-actions">
           <button type="button" class="cancel">Cancel</button>
           <button type="submit">Add</button>
@@ -71,8 +79,20 @@
         </div>
       </form>
     </div>
+    <!-- Custom Confirm Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+      <div class="modal" style="max-width:380px;">
+        <h2 id="confirm-title">Confirm</h2>
+        <p id="confirm-message" style="text-align:center;color:#374151;margin:4px 0 8px;"></p>
+        <div class="modal-actions">
+          <button id="confirm-cancel-btn" class="cancel">Cancel</button>
+          <button id="confirm-ok-btn" class="danger">Confirm</button>
+        </div>
+      </div>
+    </div>
   </div>
 
+  
   <script src="wave-animation.js" defer></script>
 </body>
 </html>
