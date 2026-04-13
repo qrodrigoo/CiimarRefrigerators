@@ -7,8 +7,39 @@
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom right, #b3e5fc);
+  background: linear-gradient(135deg, #cceeff 0%, #a8d8f0 50%, #87c8e8 100%);
   padding: 24px;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Logo marca d'água no fundo */
+body::before {
+  content: '';
+  position: fixed;
+  bottom: -60px;
+  right: -60px;
+  width: 520px;
+  height: 520px;
+  background-image: url('./logo/imagem_2026-04-13_120829917-removebg-preview.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Canvas da animação de ondas estilo PS3 */
+#wave-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Header com título e barra de busca */
@@ -87,13 +118,18 @@ body {
 
 /* Cartão de geladeira */
 .card {
-  background-color: white;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 16px;
   width: 190px;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(80, 160, 220, 0.18), 0 1.5px 4px rgba(0,0,0,0.08);
+  border: 1.5px solid rgba(160, 210, 240, 0.45);
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .card:hover {
@@ -107,9 +143,10 @@ body {
 
 .card .bar {
   height: 48px;
-  background-color: #d1d5db;
+  background-color: rgba(180, 215, 240, 0.45);
   border-radius: 8px;
   margin-bottom: 8px;
+  border: 1.5px solid rgba(100, 180, 230, 0.35);
 }
 
 /* FAB menu */
@@ -119,14 +156,15 @@ body {
   right: 24px;
   display: flex;
   align-items: center;
+  flex-direction: row-reverse;
   gap: 12px;
   z-index: 100;
 }
 
 .fab-options {
   display: none;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  gap: 12px;
 }
 
 .fab-options.show {
@@ -134,29 +172,45 @@ body {
 }
 
 .fab-menu button {
-  padding: 12px 18px;
+  height: 48px;
+  padding: 0 20px;
   border: none;
-  border-radius: 9999px;
+  border-radius: 30px;
   color: white;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: all 0.2s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.fab-menu button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
 }
 
 #toggle-menu {
-  background-color: #374151;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  width: 48px;
+  padding: 0;
+  font-size: 20px;
 }
 
 #add-btn {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #10b981, #059669);
 }
 
 #rename-btn {
-  background-color: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
 #delete-btn {
-  background-color: #dc2626;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
 /* Modais */
@@ -244,21 +298,25 @@ body {
 /* Botão de espera */
 .waiting-btn {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background-color: #3b82f6;
+  bottom: 24px;
+  left: 24px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
-  padding: 10px 16px;
+  padding: 12px 24px;
   border-radius: 30px;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 15px;
   text-decoration: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  transition: background-color 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s ease;
+  z-index: 100;
+  display: flex;
+  align-items: center;
 }
 
 .waiting-btn:hover {
-  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
 }
 
 /* Reset básico */
@@ -270,8 +328,11 @@ body {
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom right, #b3e5fc);
+  background: linear-gradient(135deg, #cceeff 0%, #a8d8f0 50%, #87c8e8 100%);
   padding: 24px;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* Layout em tabela invisível */
@@ -279,6 +340,8 @@ body {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 .layout-table td {
