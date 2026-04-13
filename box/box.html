@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Box View</title>
+  <link rel="stylesheet" href="box-style.css" />
+</head>
+<body>
+  <div class="box-container">
+    <div class="top-bar">
+      <button id="back-button" class="back-button">← Back</button>
+      <h1 id="box-title">Box</h1>
+      <button id="delete-box" class="delete-box-button">🗑️ Delete Box</button>
+    </div>
+
+    <div class="box-info" id="box-info"></div>
+
+    <div class="sample-list" id="sample-list"></div>
+    <p class="no-samples" id="no-samples" style="display: none">No samples in this box.</p>
+
+    <!-- FAB Add Sample -->
+    <button class="fab-add" id="show-add-form">+ Add Sample</button>
+  </div>
+
+  <!-- Sample Detail Modal -->
+  <div class="modal-overlay" id="sample-detail-modal">
+    <div class="modal-form">
+      <h2>Sample Details</h2>
+      <div id="sample-details"></div>
+      <div class="modal-actions">
+        <button id="edit-sample" class="edit">Edit</button>
+        <button id="transfer-sample" class="transfer">Transfer</button>
+        <button id="delete-sample" class="delete">Delete</button>
+        <button id="close-sample-modal" class="close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Sample Modal -->
+  <div class="modal-overlay" id="sample-form-modal">
+    <form class="modal-form" id="sample-form">
+      <h2 id="form-title">Add Sample</h2>
+      <input type="text"   id="sample-name"        placeholder="Name *" required />
+      <div class="project-autocomplete">
+        <input type="text"   id="sample-project"      placeholder="Project *" required autocomplete="off" />
+        <ul class="project-dropdown" id="project-dropdown"></ul>
+      </div>
+      <input type="number" id="sample-quantity"     placeholder="Quantity *" required />
+      <input type="text"   id="sample-observation"  placeholder="Observation" />
+      <div class="modal-actions">
+        <button type="button" class="cancel" id="cancel-form">Cancel</button>
+        <button type="submit" class="submit">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Transfer Modal -->
+  <div class="modal-overlay" id="transfer-modal">
+    <form class="modal-form" id="transfer-form">
+      <h2>Transfer Sample</h2>
+
+      <select id="transfer-fridge" required>
+        <option value="">Select Fridge</option>
+      </select>
+
+      <select id="transfer-drawer" required>
+        <option value="">Select Drawer</option>
+      </select>
+
+      <select id="transfer-type" required>
+        <option value="">Select Storage Type</option>
+        <option value="Bag">Bag</option>
+        <option value="Box">Box</option>
+        <option value="Rack">Rack</option>
+      </select>
+
+      <!-- Rack -->
+      <select id="transfer-rack" style="display: none;"></select>
+      <select id="transfer-position" style="display: none;">
+        <option value="">Select Position</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+
+      <!-- Box -->
+      <select id="transfer-box" style="display: none;"></select>
+
+      <div class="modal-actions">
+        <button type="button" id="cancel-transfer" class="cancel">Cancel</button>
+        <button type="submit" class="submit">Confirm Transfer</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Custom Confirm Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-form" style="max-width:380px;">
+      <h2 id="confirm-title">Confirm</h2>
+      <p id="confirm-message" style="text-align:center;color:#374151;margin:4px 0 8px;"></p>
+      <div class="modal-actions">
+        <button id="confirm-cancel-btn" class="cancel">Cancel</button>
+        <button id="confirm-ok-btn" class="delete">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="box-script.js" defer></script>
+</body>
+</html>
