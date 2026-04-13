@@ -8,6 +8,29 @@ const listContainer = document.getElementById("waiting-list");
 
 let refrigerators = [];
 
+// ─── Custom Confirm Modal ─────────────────────────────────────────
+let _confirmResolve = null;
+
+function showConfirm(message, confirmLabel = "Confirm", title = "Confirm") {
+  return new Promise(resolve => {
+    _confirmResolve = resolve;
+    document.getElementById("confirm-title").textContent = title;
+    document.getElementById("confirm-message").textContent = message;
+    document.getElementById("confirm-ok-btn").textContent = confirmLabel;
+    document.getElementById("confirm-modal").style.display = "flex";
+  });
+}
+
+document.getElementById("confirm-ok-btn").onclick = () => {
+  document.getElementById("confirm-modal").style.display = "none";
+  if (_confirmResolve) { _confirmResolve(true); _confirmResolve = null; }
+};
+
+document.getElementById("confirm-cancel-btn").onclick = () => {
+  document.getElementById("confirm-modal").style.display = "none";
+  if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
+};
+
 async function loadRefrigerators() {
   const { data, error } = await supabase.from("refrigerators").select("*");
   if (error) {
@@ -91,13 +114,13 @@ function formatTarget(item) {
 
 async function handleAccept(item) {
   if (item.action_type === "delete") {
-    const confirmAccept = confirm("Are you sure you want to permanently delete this sample?");
+    const confirmAccept = await showConfirm("Are you sure you want to permanently delete this sample?", "Delete", "Confirm Delete");
     if (!confirmAccept) return;
 
     await supabase.from("samples").delete().eq("id", item.sample_id);
     await supabase.from("waiting_list").update({ status: "approved" }).eq("id", item.id);
   } else if (item.action_type === "transfer") {
-    const confirmTransfer = confirm("Are you sure you want to transfer this sample?");
+    const confirmTransfer = await showConfirm("Are you sure you want to transfer this sample?", "Transfer", "Confirm Transfer");
     if (!confirmTransfer) return;
 
     await supabase.from("samples").update({
@@ -120,7 +143,7 @@ async function handleAccept(item) {
 
 
 async function handleReject(id) {
-  const confirmDelete = confirm("Do you want to reject and restore the sample?");
+  const confirmDelete = await showConfirm("Do you want to reject and restore the sample?", "Reject", "Reject Request");
   if (!confirmDelete) return;
 
   const { data, error } = await supabase

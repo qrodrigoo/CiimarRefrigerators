@@ -1,159 +1,155 @@
-/* ═══════════════════════════════════════════════
-   waiting-style.css  —  paleta CIIMAR unificada
-═══════════════════════════════════════════════ */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-* {
+/* Layout principal */
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #cceeff 0%, #a8d8f0 50%, #87c8e8 100%);
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* ── Logo marca d'água ─────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  bottom: -60px;
-  right: -60px;
-  width: 520px;
-  height: 520px;
-  background-image: url('../logo/imagem_2026-04-13_120829917-removebg-preview.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.16;
-  pointer-events: none;
-  z-index: 0;
+  font-family: sans-serif;
+  background-color: #f9fafb;
 }
 
 .waiting-container {
   max-width: 900px;
   margin: 40px auto;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(80, 160, 220, 0.2), 0 1.5px 6px rgba(0,0,0,0.05);
-  border: 1.5px solid rgba(160, 210, 240, 0.45);
-  position: relative;
-  z-index: 1;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
   margin-bottom: 30px;
-  font-size: 26px;
-  font-weight: 700;
-  color: #0d3a5c;
-  letter-spacing: -0.3px;
 }
 
-/* ── Lista de solicitações ─────────────────────── */
+/* Lista de solicitações */
 .waiting-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* ── Cartão de cada item ───────────────────────── */
+/* Cartão de cada item */
 .waiting-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(140, 200, 240, 0.4);
-  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 3px 12px rgba(80, 160, 220, 0.10);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.waiting-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(60, 140, 210, 0.18);
-  background: rgba(255, 255, 255, 0.85);
+  background-color: #f3f4f6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .waiting-card h3 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   font-size: 18px;
-  font-weight: 600;
-  color: #0d3a5c;
 }
 
 .waiting-card p {
-  line-height: 1.4;
   margin: 4px 0;
-  color: #3a7090;
+  color: #4b5563;
   font-size: 14px;
 }
 
-/* ── Ações ─────────────────────────────────────── */
 .waiting-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 15px;
 }
 
 .waiting-actions button {
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: all 0.2s ease;
-  font-family: inherit;
 }
 
 .accept-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background-color: #10b981;
   color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .reject-btn {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background-color: #ef4444;
   color: white;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
-.accept-btn:hover,
+.accept-btn:hover {
+  background-color: #059669;
+}
+
 .reject-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  opacity: 0.95;
+  background-color: #dc2626;
 }
 
-/* ── Botão Voltar ──────────────────────────────── */
 .back-button {
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
-  color: #1a4a6b;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-weight: 600;
-  font-size: 14px;
-  border: 1.5px solid rgba(100, 180, 230, 0.4);
+  background-color: #d1d5db;
+  color: #111827;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 100, 180, 0.12);
-  margin: 24px;
-  position: relative;
-  z-index: 1;
+  margin: 20px;
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.75);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0, 100, 180, 0.18);
+  background-color: #9ca3af;
 }
+
+.waiting-card p {
+  line-height: 1;
+  margin: 0.5px 0;
+}
+
+/* ─── Custom Confirm Modal ───────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay[style*="display: flex"] {
+  display: flex !important;
+}
+
+.modal-form {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  width: 380px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form h2 {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-actions button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-actions .cancel { background-color: #e5e7eb; color: #111827; }
+.modal-actions .accept { background-color: #10b981; color: white;   }
+.modal-actions .cancel:hover { background-color: #d1d5db; }
+.modal-actions .accept:hover { background-color: #059669; }
