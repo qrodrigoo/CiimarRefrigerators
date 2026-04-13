@@ -84,7 +84,10 @@
     <h2 id="form-title">Edit Sample</h2>
 
     <input type="text" id="sample-name" placeholder="Name" required />
-    <input type="text" id="sample-project" placeholder="Project" />
+    <div class="project-autocomplete">
+      <input type="text" id="sample-project" placeholder="Project" autocomplete="off" />
+      <ul class="project-dropdown" id="project-dropdown"></ul>
+    </div>
     <input type="number" id="sample-quantity" placeholder="Quantity" required />
     <input type="text" id="sample-observation" placeholder="Observation" />
 
@@ -135,9 +138,18 @@
 
 
 
-
+<!-- Custom Confirm Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-form" style="max-width:380px;">
+    <h2 id="confirm-title">Confirm</h2>
+    <p id="confirm-message" style="text-align:center;color:#374151;margin:4px 0 8px;"></p>
+    <div class="modal-actions">
+      <button id="confirm-cancel-btn" class="cancel">Cancel</button>
+      <button id="confirm-ok-btn" class="delete">Confirm</button>
+    </div>
+  </div>
+</div>
 
 </body>
   <script type="module" src="rack-script.js" defer></script>
-  <script src="../wave-animation.js" defer></script>
 </html>
