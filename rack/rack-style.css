@@ -1,15 +1,49 @@
-/* rack-style.css */
-body {
+/* ═══════════════════════════════════════════════
+   rack-style.css  —  paleta CIIMAR unificada
+═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
   margin: 0;
-  font-family: sans-serif;
-  background-color: #f3f4f6;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.rack-container {
-  padding: 20px;
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #cceeff 0%, #a8d8f0 50%, #87c8e8 100%);
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
+/* ── Logo marca d'água ─────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  bottom: -60px;
+  right: -60px;
+  width: 520px;
+  height: 520px;
+  background-image: url('../logo/imagem_2026-04-13_120829917-removebg-preview.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Layout geral ──────────────────────────────── */
+.rack-container {
+  padding: 24px;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Topo ──────────────────────────────────────── */
 .top-bar {
   display: flex;
   align-items: center;
@@ -18,96 +52,189 @@ body {
 }
 
 .back-button {
-  background-color: #d1d5db;
-  color: #111827;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  color: #1a4a6b;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1.5px solid rgba(100, 180, 230, 0.4);
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 100, 180, 0.12);
 }
 
 .back-button:hover {
-  background-color: #9ca3af;
+  background: rgba(255, 255, 255, 0.75);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 100, 180, 0.18);
 }
 
 #rack-title {
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 26px;
+  font-weight: 700;
   margin: 0;
+  color: #0d3a5c;
+  letter-spacing: -0.3px;
+  flex: 1; /* Ocupa o espaço para empurrar o delete-rack-button para a direita */
 }
 
+.delete-rack-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.delete-rack-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  opacity: 0.95;
+}
+
+/* ── Grade de colunas do rack ──────────────────── */
 .rack-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .rack-column {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(80, 160, 220, 0.15);
+  border: 1.5px solid rgba(160, 210, 240, 0.45);
 }
 
 .rack-column h2 {
   font-size: 16px;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 6px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid rgba(160, 210, 240, 0.5);
+  padding-bottom: 8px;
+  color: #1a4a6b;
 }
 
+/* ── Cartão de amostra no rack ─────────────────── */
 .sample-card {
-  background-color: #f0f9ff;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
   border-radius: 10px;
-  padding: 2px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  padding: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(80, 160, 220, 0.12);
+  border: 1px solid rgba(140, 200, 240, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   cursor: pointer;
   text-align: center;
+  color: #0d3a5c;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .sample-card:hover {
-  transform: scale(1.03);
-  background-color: #e0f2fe;
+  transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 14px rgba(60, 140, 210, 0.18);
 }
 
+/* ── Sem amostras ──────────────────────────────── */
 .no-samples {
   text-align: center;
-  color: #6b7280;
+  color: #5a8aab;
   font-style: italic;
   margin-top: 40px;
 }
 
-/* Modal Overlay */
+/* ── Modais ────────────────────────────────────── */
 .modal-overlay {
+  display: none;
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: none; /* Só aparece com display: flex */
+  background: rgba(10, 40, 70, 0.45);
+  backdrop-filter: blur(4px);
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
-/* Mostra o modal */
 .modal-overlay.show,
 .modal-overlay[style*="display: flex"] {
   display: flex !important;
 }
 
-/* Formulário do modal */
 .modal-form {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 28px 32px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 80, 160, 0.20);
+  border: 1.5px solid rgba(160, 210, 240, 0.45);
   width: 400px;
+  max-width: 90vw;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.modal-form h2 {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0d3a5c;
+  margin-bottom: 8px;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+  padding: 10px 14px;
+  border: 1.5px solid rgba(100, 180, 230, 0.5);
+  border-radius: 10px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.70);
+  color: #0d3a5c;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+  width: 100%;
+}
+
+.modal-form input:focus,
+.modal-form select:focus,
+.modal-form textarea:focus {
+  border-color: rgba(60, 150, 220, 0.75);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  display: block;
+}
+
+/* Informação de amostra no Modal (sample-details div) */
+#sample-details {
+  font-size: 14px;
+  color: #0d3a5c;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(100, 180, 230, 0.3);
 }
 
 /* Botões do modal */
@@ -115,215 +242,54 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
-
-.modal-form h2 {
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 12px;
-}
-
 
 .modal-actions button {
-  padding: 8px 16px;
+  padding: 9px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
-.modal-actions .edit {
-  background-color: #10b981;
+.modal-actions .edit,
+.modal-actions .submit {
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .modal-actions .delete {
-  background-color: #ef4444;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
-}
-
-.modal-actions .close {
-  background-color: #e5e7eb;
-  color: black;
-}
-
-/*Botão delete*/
-.delete-rack-button {
-  background-color: #ef4444;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: auto;
-}
-
-.delete-rack-button:hover {
-  background-color: #dc2626;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
 .modal-actions .transfer {
-  background-color: #3b82f6; /* Azul */
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
-  border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 6px;
-  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
-/* Transfer Modal */
+.modal-actions .cancel,
+.modal-actions .close {
+  background: rgba(220, 235, 245, 0.75);
+  color: #1a4a6b;
+  border: 1px solid rgba(100, 180, 230, 0.3);
+}
+
+.modal-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0.95;
+}
+
+/* Transfer modal extra */
 #transfer-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
   z-index: 9999;
-}
-
-#transfer-modal .modal-form {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-#transfer-modal h2 {
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-#transfer-modal select,
-#transfer-modal textarea {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 100%;
-}
-
-#transfer-modal textarea {
-  resize: vertical;
-  min-height: 80px;
-  display: block;
-}
-
-#transfer-modal .modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-#transfer-modal .modal-actions .cancel {
-  background-color: #e5e7eb;
-  color: #111827;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#transfer-modal .modal-actions .submit {
-  background-color: #10b981;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#transfer-modal .modal-actions .cancel:hover {
-  background-color: #d1d5db;
-}
-
-#transfer-modal .modal-actions .submit:hover {
-  background-color: #059669;
-}
-
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.modal-overlay.show {
-  display: flex;
-}
-
-.modal-form {
-  background-color: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-  max-width: 400px;
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.modal-form h2 {
-  font-size: 20px;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.modal-form input,
-.modal-form select,
-.modal-form textarea {
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.modal-form textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.modal-actions .cancel {
-  background-color: #e5e7eb;
-  color: #111827;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.modal-actions .submit {
-  background-color: #10b981;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.modal-actions .cancel:hover {
-  background-color: #d1d5db;
-}
-
-.modal-actions .submit:hover {
-  background-color: #059669;
 }
