@@ -107,7 +107,7 @@ function formatTarget(item) {
   if (item.action_type === "delete") {
     return "Delete Sample";
   }
-  return `Drawer ${item.target_drawer}` +
+  return `Door ${item.target_drawer}` +
     (item.target_rack ? `, Rack ${item.target_rack}` : "") +
     (item.target_position ? `, Position ${item.target_position}` : "");
 }
