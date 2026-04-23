@@ -21,7 +21,7 @@ const renameForm = document.getElementById("rename-form");
 const deleteForm = document.getElementById("delete-form");
 
 const addLabelInput = document.getElementById("add-label");
-const addDrawerCountInput = document.getElementById("add-drawer-count");
+const addDoorCountInput = document.getElementById("add-door-count");
 const renameSelect = document.getElementById("rename-select");
 const renameInput = document.getElementById("new-label");
 const deleteSelect = document.getElementById("delete-select");
@@ -69,12 +69,12 @@ function renderFridges() {
   deleteSelect.innerHTML = "<option value='' disabled selected>Select a refrigerator</option>";
 
   refrigerators.forEach((fridge) => {
-    const drawerCount = fridge.drawer_count || 4;
+    const doorCount = fridge.drawer_count || 4;
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
       <h3>${fridge.label}</h3>
-      ${Array(drawerCount).fill("<div class='bar'></div>").join("")}
+      ${Array(doorCount).fill("<div class='bar'></div>").join("")}
     `;
     card.onclick = () => {
       window.location.href = `./fridge/fridge.html?id=${fridge.id}`;
@@ -104,15 +104,15 @@ addForm.onsubmit = async (e) => {
   e.preventDefault();
   const label = addLabelInput.value.trim();
   if (!label) return;
-  const drawer_count = parseInt(addDrawerCountInput.value) || 4;
-  const { error } = await supabase.from("refrigerators").insert({ label, drawer_count });
+  const door_count = parseInt(addDoorCountInput.value) || 4;
+  const { error } = await supabase.from("refrigerators").insert({ label, drawer_count: door_count });
   if (error) {
     alert("Error adding fridge");
     console.error(error);
   } else {
     addModal.classList.remove("show");
     addForm.reset();
-    addDrawerCountInput.value = 4;
+    addDoorCountInput.value = 4;
     loadFridges();
   }
 };
