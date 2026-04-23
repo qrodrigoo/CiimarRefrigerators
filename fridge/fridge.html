@@ -24,7 +24,7 @@
       <h1 id="fridge-label"></h1>
     </div>
 
-    <div class="drawer-grid" id="drawer-grid"></div>
+    <div class="door-grid" id="door-grid"></div>
 
     <p class="no-samples" id="no-samples" style="display: none">No samples found.</p>
 
@@ -53,24 +53,27 @@
     <div class="modal-overlay" id="sample-form-modal">
       <form class="modal-form" id="sample-form">
         <h2 id="form-title">Add New Sample</h2>
-        <input type="text" placeholder="Name *" id="sample-name" required />
+        <input type="text" placeholder="Description *" id="sample-name" required />
         <div class="project-autocomplete">
           <input type="text" placeholder="Project *" id="sample-project" required autocomplete="off" />
           <ul class="project-dropdown" id="project-dropdown"></ul>
         </div>
-        <select id="sample-drawer" required>
-          <option value="">Drawer *</option>
+        <select id="sample-door" required>
+          <option value="">Door *</option>
         </select>
-        <input type="number" placeholder="Quantity *" id="sample-quantity" required />
+        <input type="number" placeholder="Quantity *" id="sample-quantity" required value="1" />
+        <select id="location-type" required>
+          <option value="door">Store in: Door</option>
+          <option value="rack">Store in: Rack</option>
+          <option value="box">Store in: Box</option>
+        </select>
         <select id="sample-container-type" required>
           <option value="">Select Storage Type *</option>
           <option value="Bag">Bag</option>
           <option value="Box">Box</option>
-          <option value="Rack">Rack</option>
         </select>
 
-        <!-- Para Bag/Box container genérico: descrição -->
-        <input type="text" id="sample-detail" placeholder="Description (optional)" />
+
 
         <!-- Para Box (entidade): selecção de Box -->
         <select id="sample-box" style="display: none;"></select>
@@ -99,8 +102,8 @@
       <form class="modal-form" id="rack-form">
         <h2>Add Rack</h2>
         <input type="text" id="rack-name" placeholder="Rack Name (A–Z)" required />
-        <select id="rack-drawer" required>
-          <option value="">Select Drawer</option>
+        <select id="rack-door" required>
+          <option value="">Select Door</option>
         </select>
         <div class="modal-actions">
           <button type="button" id="cancel-rack" class="cancel">Cancel</button>
@@ -114,8 +117,8 @@
       <form class="modal-form" id="box-form">
         <h2>Add Box</h2>
         <input type="text" id="box-name" placeholder="Box Name (A–Z)" required />
-        <select id="box-drawer" required>
-          <option value="">Select Drawer</option>
+        <select id="box-door" required>
+          <option value="">Select Door</option>
         </select>
         <div class="modal-actions">
           <button type="button" id="cancel-box" class="cancel">Cancel</button>
@@ -133,8 +136,8 @@
           <option value="">Select Fridge</option>
         </select>
 
-        <select id="transfer-drawer" required>
-          <option value="">Select Drawer</option>
+        <select id="transfer-door" required>
+          <option value="">Select Door</option>
         </select>
 
         <select id="transfer-type" required>

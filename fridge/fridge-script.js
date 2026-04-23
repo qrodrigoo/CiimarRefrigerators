@@ -11,7 +11,7 @@ const fridgeId = params.get("id");
 
 // ─── DOM Elements ─────────────────────────────────────────────────
 const fridgeLabel   = document.getElementById("fridge-label");
-const drawerGrid    = document.getElementById("drawer-grid");
+const doorGrid    = document.getElementById("door-grid");
 const searchInput   = document.getElementById("search-input");
 const backButton    = document.getElementById("back-button");
 const noSamples     = document.getElementById("no-samples");
@@ -29,28 +29,25 @@ const sampleForm       = document.getElementById("sample-form");
 const formTitle        = document.getElementById("form-title");
 const nameInput        = document.getElementById("sample-name");
 const projectInput     = document.getElementById("sample-project");
-const drawerSelect     = document.getElementById("sample-drawer");
+const doorSelect     = document.getElementById("sample-door");
 const quantityInput    = document.getElementById("sample-quantity");
 const typeSelect       = document.getElementById("sample-container-type");
-const detailInput      = document.getElementById("sample-detail");
-const boxSelect        = document.getElementById("sample-box");
-const rackSelect       = document.getElementById("sample-rack");
-const positionSelect   = document.getElementById("sample-position");
-const obsInput         = document.getElementById("sample-observation");
+const locationTypeSelect = document.getElementById("location-type");
 const cancelFormBtn    = document.getElementById("cancel-form");
+const detailInput      = document.getElementById("sample-detail"); // Not used anymore but kept to avoid breakage if ref'd elsewhere briefly
 
 // Rack form modal
 const rackFormModal  = document.getElementById("rack-form-modal");
 const rackForm       = document.getElementById("rack-form");
 const rackNameInput  = document.getElementById("rack-name");
-const rackDrawerInput = document.getElementById("rack-drawer");
+const rackDoorInput = document.getElementById("rack-door");
 const cancelRackBtn  = document.getElementById("cancel-rack");
 
 // Box form modal
 const boxFormModal  = document.getElementById("box-form-modal");
 const boxForm       = document.getElementById("box-form");
 const boxNameInput  = document.getElementById("box-name");
-const boxDrawerInput = document.getElementById("box-drawer");
+const boxDoorInput = document.getElementById("box-door");
 const cancelBoxBtn  = document.getElementById("cancel-box");
 
 // FAB buttons
@@ -63,15 +60,19 @@ const transferModal          = document.getElementById("transfer-modal");
 const transferForm           = document.getElementById("transfer-form");
 const cancelTransferBtn      = document.getElementById("cancel-transfer");
 const fridgeSelectTransfer   = document.getElementById("transfer-fridge");
-const transferDrawerSelect   = document.getElementById("transfer-drawer");
+const transferDoorSelect   = document.getElementById("transfer-door");
 const transferTypeSelect     = document.getElementById("transfer-type");
 const transferRackSelect     = document.getElementById("transfer-rack");
 const transferPositionSelect = document.getElementById("transfer-position");
 const transferBoxSelect      = document.getElementById("transfer-box");
+const boxSelect        = document.getElementById("sample-box");
+const rackSelect       = document.getElementById("sample-rack");
+const positionSelect   = document.getElementById("sample-position");
+const obsInput         = document.getElementById("sample-observation");
 
 // ─── State ────────────────────────────────────────────────────────
 let allSamples = [], racks = [], boxes = [], selectedSample = null, fridge = null, fridgeName = "";
-let drawerCount = 4;
+let doorCount = 4;
 let allProjects = [];
 
 // ─── Project Autocomplete ─────────────────────────────────────────
@@ -207,13 +208,13 @@ deleteSampleBtn.onclick = async () => {
   await loadSamples();
 };
 
-// ─── Helper: populate drawer selects ──────────────────────────────
-function populateDrawerSelects() {
-  const selectors = [drawerSelect, rackDrawerInput, boxDrawerInput];
+// ─── Helper: populate door selects ──────────────────────────────
+function populateDoorSelects() {
+  const selectors = [doorSelect, rackDoorInput, boxDoorInput];
   selectors.forEach(sel => {
     const current = sel.value;
-    sel.innerHTML = `<option value="">Select Drawer</option>`;
-    for (let i = 1; i <= drawerCount; i++) {
+    sel.innerHTML = `<option value="">Select Door</option>`;
+    for (let i = 1; i <= doorCount; i++) {
       sel.innerHTML += `<option value="${i}">${i}</option>`;
     }
     if (current) sel.value = current;
@@ -222,98 +223,89 @@ function populateDrawerSelects() {
 
 // ─── Open Sample Form ─────────────────────────────────────────────
 function openForm(sample = null) {
-  if (sample) {
-    formTitle.textContent = "Edit Sample";
-    nameInput.value     = sample.name;
-    projectInput.value  = sample.project;
-    drawerSelect.value  = sample.drawer;
-    quantityInput.value = sample.quantity;
-    typeSelect.value    = sample.container_type;
-    obsInput.value      = sample.observation || "";
-    selectedSample      = sample;
+    // Defaults
+    quantityInput.value = (sample && sample.quantity) ? sample.quantity : 1;
+    
+    if (sample) {
+      formTitle.textContent = "Edit Sample";
+      nameInput.value     = sample.name;
+      projectInput.value  = sample.project;
+      doorSelect.value  = sample.drawer;
+      typeSelect.value    = sample.container_type;
+      obsInput.value      = sample.observation || "";
+      selectedSample      = sample;
 
-    // Trigger type change to show correct fields
-    typeSelect.dispatchEvent(new Event("change"));
-
-    // Restore detail/rack/box after triggering change
-    if (sample.container_type === "Rack") {
-      rackSelect.value    = sample.container_detail?.charAt(0) || "";
-      positionSelect.value = sample.container_detail?.slice(1) || "";
-    } else if (sample.container_type === "Box") {
-      // box_name holds the box letter
-      boxSelect.value = sample.box_name || "";
+      // Determine Location Type from current data
+      if (sample.container_type === "Rack") {
+        locationTypeSelect.value = "rack";
+        rackSelect.value    = sample.container_detail?.charAt(0) || "";
+        positionSelect.value = sample.container_detail?.slice(1) || "";
+      } else if (sample.container_type === "Box") {
+        locationTypeSelect.value = "box";
+        boxSelect.value = sample.box_name || "";
+      } else {
+        locationTypeSelect.value = "door";
+      }
     } else {
-      detailInput.value = sample.container_detail || "";
+      formTitle.textContent = "Add New Sample";
+      sampleForm.reset();
+      quantityInput.value = 1; // Double check reset
+      selectedSample = null;
+      locationTypeSelect.value = "door";
     }
-  } else {
-    formTitle.textContent = "Add New Sample";
-    sampleForm.reset();
-    selectedSample = null;
 
-    // Hide conditional fields
-    detailInput.style.display   = "block";
-    boxSelect.style.display     = "none";
-    rackSelect.style.display    = "none";
-    positionSelect.style.display = "none";
-  }
-  sampleFormModal.classList.add("show");
+    // Trigger visibility update
+    locationTypeSelect.dispatchEvent(new Event("change"));
+    sampleFormModal.classList.add("show");
 }
 
-// ─── Type select change: show/hide fields ─────────────────────────
-typeSelect.onchange = async () => {
-  const type = typeSelect.value;
+// ─── Location type change: show/hide fields ─────────────────────────
+locationTypeSelect.onchange = async () => {
+    const loc = locationTypeSelect.value;
+    boxSelect.style.display      = (loc === "box") ? "block" : "none";
+    rackSelect.style.display     = (loc === "rack") ? "block" : "none";
+    positionSelect.style.display = (loc === "rack") ? "block" : "none";
 
-  detailInput.style.display    = "none";
-  boxSelect.style.display      = "none";
-  rackSelect.style.display     = "none";
-  positionSelect.style.display = "none";
-
-  if (type === "Rack") {
-    rackSelect.style.display    = "block";
-    positionSelect.style.display = "block";
-    await loadRacksForDrawer(drawerSelect.value, rackSelect);
-  } else if (type === "Box") {
-    boxSelect.style.display = "block";
-    await loadBoxesForDrawer(drawerSelect.value, boxSelect);
-  } else {
-    detailInput.style.display = "block";
-  }
+    if (loc === "rack") {
+      await loadRacksForDoor(doorSelect.value, rackSelect);
+    } else if (loc === "box") {
+      await loadBoxesForDoor(doorSelect.value, boxSelect);
+    }
 };
 
-// Update rack/box selects when drawer changes in sample form
-drawerSelect.onchange = async () => {
-  if (typeSelect.value === "Rack") {
-    await loadRacksForDrawer(drawerSelect.value, rackSelect);
-  } else if (typeSelect.value === "Box") {
-    await loadBoxesForDrawer(drawerSelect.value, boxSelect);
-  }
+// Update rack/box selects when door changes in sample form
+doorSelect.onchange = async () => {
+    if (locationTypeSelect.value === "rack") {
+      await loadRacksForDoor(doorSelect.value, rackSelect);
+    } else if (locationTypeSelect.value === "box") {
+      await loadBoxesForDoor(doorSelect.value, boxSelect);
+    }
 };
 
 // ─── Sample Form Submit ───────────────────────────────────────────
 sampleForm.onsubmit = async (e) => {
   e.preventDefault();
-
-  const type = typeSelect.value;
-
-  let container_detail = null;
+  const locType = locationTypeSelect.value;
+  let final_type = typeSelect.value;
+  let container_detail = "---";
   let box_name = null;
 
-  if (type === "Rack") {
+  if (locType === "rack") {
+    final_type = "Rack"; // Preserve system logic for Rack rendering
     container_detail = `${rackSelect.value}${positionSelect.value}`;
-  } else if (type === "Box") {
+  } else if (locType === "box") {
+    final_type = "Box"; // Preserve system logic for Box rendering
     box_name = boxSelect.value;
     container_detail = boxSelect.value;
-  } else {
-    container_detail = detailInput.value || "---";
   }
 
   const payload = {
     name: nameInput.value,
     project: projectInput.value,
-    drawer: drawerSelect.value,
+    drawer: doorSelect.value,
     quantity: quantityInput.value,
-    container_type: type,
-    container_detail: container_detail || "---",
+    container_type: final_type,
+    container_detail: container_detail,
     box_name: box_name,
     observation: obsInput.value || "---",
     refrigerator_id: fridgeId
@@ -335,7 +327,7 @@ sampleForm.onsubmit = async (e) => {
 rackForm.onsubmit = async (e) => {
   e.preventDefault();
 
-  const drawer   = rackDrawerInput.value;
+  const door   = rackDoorInput.value;
   let rackName   = rackNameInput.value.trim().toUpperCase();
 
   if (!/^[A-Z]$/.test(rackName)) {
@@ -346,16 +338,16 @@ rackForm.onsubmit = async (e) => {
   const { data: existing } = await supabase
     .from("racks")
     .select("name")
-    .eq("drawer", drawer)
+    .eq("drawer", door)
     .eq("refrigerator_id", fridgeId)
     .eq("name", rackName);
 
   if (existing.length > 0) {
-    alert("This rack name is already used in the selected drawer.");
+    alert("This rack name is already used in the selected door.");
     return;
   }
 
-  await supabase.from("racks").insert({ name: rackName, drawer, refrigerator_id: fridgeId });
+  await supabase.from("racks").insert({ name: rackName, drawer: door, refrigerator_id: fridgeId });
 
   rackFormModal.classList.remove("show");
   rackForm.reset();
@@ -366,7 +358,7 @@ rackForm.onsubmit = async (e) => {
 boxForm.onsubmit = async (e) => {
   e.preventDefault();
 
-  const drawer  = boxDrawerInput.value;
+  const door  = boxDoorInput.value;
   let boxName   = boxNameInput.value.trim().toUpperCase();
 
   if (!/^[A-Z]$/.test(boxName)) {
@@ -377,16 +369,16 @@ boxForm.onsubmit = async (e) => {
   const { data: existing } = await supabase
     .from("boxes")
     .select("name")
-    .eq("drawer", drawer)
+    .eq("drawer", door)
     .eq("refrigerator_id", fridgeId)
     .eq("name", boxName);
 
   if (existing.length > 0) {
-    alert("This box name is already used in the selected drawer.");
+    alert("This box name is already used in the selected door.");
     return;
   }
 
-  await supabase.from("boxes").insert({ name: boxName, drawer, refrigerator_id: fridgeId });
+  await supabase.from("boxes").insert({ name: boxName, drawer: door, refrigerator_id: fridgeId });
 
   boxFormModal.classList.remove("show");
   boxForm.reset();
@@ -400,7 +392,7 @@ function showSampleDetail(s) {
     <p><strong>Name:</strong> ${s.name}</p>
     <p><strong>Project:</strong> ${s.project}</p>
     <p><strong>Fridge:</strong> ${fridgeName}</p>
-    <p><strong>Drawer:</strong> ${s.drawer}</p>
+    <p><strong>Door:</strong> ${s.drawer}</p>
     <p><strong>Quantity:</strong> ${s.quantity}</p>
     <p><strong>Container Type:</strong> ${s.container_type}</p>
     <p><strong>Container Detail:</strong> ${s.container_detail}</p>
@@ -411,7 +403,7 @@ function showSampleDetail(s) {
 
 function render() {
   const filter = searchInput.value.toLowerCase();
-  drawerGrid.innerHTML = "";
+  doorGrid.innerHTML = "";
 
   const filtered = allSamples.filter(s =>
     s.name.toLowerCase().includes(filter) ||
@@ -422,18 +414,18 @@ function render() {
   const hasSamples = filtered.length > 0 || racks.length > 0 || boxes.length > 0;
   noSamples.style.display = hasSamples ? "none" : "block";
 
-  for (let drawer = 1; drawer <= drawerCount; drawer++) {
+  for (let door = 1; door <= doorCount; door++) {
     const col = document.createElement("div");
-    col.className = "drawer-column";
+    col.className = "door-column";
 
     const title = document.createElement("h2");
-    title.className = "drawer-title";
-    title.textContent = `Drawer ${drawer}`;
+    title.className = "door-title";
+    title.textContent = `Door ${door}`;
     col.appendChild(title);
 
     // Non-rack, non-box samples
     const samples = filtered.filter(s =>
-      String(s.drawer) === String(drawer) &&
+      String(s.drawer) === String(door) &&
       s.container_type !== "Rack" &&
       s.container_type !== "Box"
     );
@@ -447,8 +439,8 @@ function render() {
     });
 
     // Rack cards
-    const drawerRacks = racks.filter(r => String(r.drawer) === String(drawer));
-    drawerRacks.forEach(r => {
+    const doorRacks = racks.filter(r => String(r.drawer) === String(door));
+    doorRacks.forEach(r => {
       const rack = document.createElement("div");
       rack.className = "sample-card rack-card";
       rack.innerHTML = `<h3>🗄️ Rack ${r.name}</h3>`;
@@ -457,8 +449,8 @@ function render() {
     });
 
     // Box cards
-    const drawerBoxes = boxes.filter(b => String(b.drawer) === String(drawer));
-    drawerBoxes.forEach(b => {
+    const doorBoxes = boxes.filter(b => String(b.drawer) === String(door));
+    doorBoxes.forEach(b => {
       const box = document.createElement("div");
       box.className = "sample-card box-card";
       box.innerHTML = `<h3>📦 Box ${b.name}</h3>`;
@@ -466,7 +458,7 @@ function render() {
       col.appendChild(box);
     });
 
-    drawerGrid.appendChild(col);
+    doorGrid.appendChild(col);
   }
 }
 
@@ -480,9 +472,9 @@ async function loadFridge() {
 
   fridge = data;
   fridgeName  = fridge.label;
-  drawerCount = fridge.drawer_count || 4;
+  doorCount = fridge.drawer_count || 4;
   fridgeLabel.textContent = fridge.label;
-  populateDrawerSelects();
+  populateDoorSelects();
 }
 
 async function loadSamples() {
@@ -516,13 +508,13 @@ async function loadBoxes() {
 }
 
 // ─── Helpers for selects ──────────────────────────────────────────
-async function loadRacksForDrawer(drawer, selectEl) {
-  if (!drawer) return;
+async function loadRacksForDoor(door, selectEl) {
+  if (!door) return;
   const { data } = await supabase
     .from("racks")
     .select("*")
     .eq("refrigerator_id", fridgeId)
-    .eq("drawer", drawer);
+    .eq("drawer", door);
 
   selectEl.innerHTML = `<option value="">Select Rack</option>`;
   (data || []).forEach(r => {
@@ -533,13 +525,13 @@ async function loadRacksForDrawer(drawer, selectEl) {
   });
 }
 
-async function loadBoxesForDrawer(drawer, selectEl) {
-  if (!drawer) return;
+async function loadBoxesForDoor(door, selectEl) {
+  if (!door) return;
   const { data } = await supabase
     .from("boxes")
     .select("*")
     .eq("refrigerator_id", fridgeId)
-    .eq("drawer", drawer);
+    .eq("drawer", door);
 
   selectEl.innerHTML = `<option value="">Select Box</option>`;
   (data || []).forEach(b => {
@@ -577,11 +569,11 @@ async function loadFridgesForTransfer() {
 
 fridgeSelectTransfer.onchange = async () => {
   const selectedFridgeId = fridgeSelectTransfer.value;
-  transferDrawerSelect.innerHTML = `<option value="">Select Drawer</option>`;
+  transferDoorSelect.innerHTML = `<option value="">Select Door</option>`;
 
   if (!selectedFridgeId) return;
 
-  // Get drawer count of selected fridge
+  // Get door count of selected fridge
   const { data } = await supabase
     .from("refrigerators")
     .select("drawer_count")
@@ -592,8 +584,8 @@ fridgeSelectTransfer.onchange = async () => {
   for (let i = 1; i <= count; i++) {
     const opt = document.createElement("option");
     opt.value = i;
-    opt.textContent = `Drawer ${i}`;
-    transferDrawerSelect.appendChild(opt);
+    opt.textContent = `Door ${i}`;
+    transferDoorSelect.appendChild(opt);
   }
 
   // Reset type-dependent fields
@@ -602,7 +594,7 @@ fridgeSelectTransfer.onchange = async () => {
   transferBoxSelect.style.display     = "none";
 };
 
-transferDrawerSelect.onchange = async () => {
+transferDoorSelect.onchange = async () => {
   if (transferTypeSelect.value === "Rack") {
     await loadTransferRacks();
   } else if (transferTypeSelect.value === "Box") {
@@ -629,10 +621,10 @@ transferTypeSelect.onchange = async () => {
 
 async function loadTransferRacks() {
   const fId  = fridgeSelectTransfer.value;
-  const draw = transferDrawerSelect.value;
-  if (!fId || !draw) return;
+  const door = transferDoorSelect.value;
+  if (!fId || !door) return;
 
-  const { data } = await supabase.from("racks").select("*").eq("refrigerator_id", fId).eq("drawer", draw);
+  const { data } = await supabase.from("racks").select("*").eq("refrigerator_id", fId).eq("drawer", door);
   transferRackSelect.innerHTML = `<option value="">Select Rack</option>`;
   (data || []).forEach(r => {
     const opt = document.createElement("option");
@@ -644,10 +636,10 @@ async function loadTransferRacks() {
 
 async function loadTransferBoxes() {
   const fId  = fridgeSelectTransfer.value;
-  const draw = transferDrawerSelect.value;
-  if (!fId || !draw) return;
+  const door = transferDoorSelect.value;
+  if (!fId || !door) return;
 
-  const { data } = await supabase.from("boxes").select("*").eq("refrigerator_id", fId).eq("drawer", draw);
+  const { data } = await supabase.from("boxes").select("*").eq("refrigerator_id", fId).eq("drawer", door);
   transferBoxSelect.innerHTML = `<option value="">Select Box</option>`;
   (data || []).forEach(b => {
     const opt = document.createElement("option");
@@ -668,7 +660,7 @@ transferForm.onsubmit = async (e) => {
     action_type: "transfer",
     status: "pending",
     target_fridge: fridgeSelectTransfer.value,
-    target_drawer: transferDrawerSelect.value,
+    target_drawer: transferDoorSelect.value,
     target_rack:
       type === "Rack" ? transferRackSelect.value : null,
     target_position:
