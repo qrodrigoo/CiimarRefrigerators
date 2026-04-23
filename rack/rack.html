@@ -42,9 +42,9 @@
       <option value="">Select Fridge</option>
     </select>
 
-    <!-- Gaveta -->
-    <select id="transfer-drawer" required>
-      <option value="">Select Drawer</option>
+    <!-- Porta -->
+    <select id="transfer-door" required>
+      <option value="">Select Door</option>
     </select>
 
     <!-- Tipo -->
@@ -83,33 +83,39 @@
 
     <h2 id="form-title">Edit Sample</h2>
 
-    <input type="text" id="sample-name" placeholder="Name" required />
+    <input type="text" id="sample-name" placeholder="Description *" required />
     <div class="project-autocomplete">
-      <input type="text" id="sample-project" placeholder="Project" autocomplete="off" />
+      <input type="text" id="sample-project" placeholder="Project *" autocomplete="off" />
       <ul class="project-dropdown" id="project-dropdown"></ul>
     </div>
-    <input type="number" id="sample-quantity" placeholder="Quantity" required />
-    <input type="text" id="sample-observation" placeholder="Observation" />
+    <!-- Porta -->
+    <select id="sample-door" required>
+      <option value="">Select Door *</option>
+      <option value="1">Door 1</option>
+      <option value="2">Door 2</option>
+      <option value="3">Door 3</option>
+      <option value="4">Door 4</option>
+    </select>
 
-    <!-- Gaveta -->
-    <select id="sample-drawer" required>
-      <option value="">Select Drawer</option>
-      <option value="1">Drawer 1</option>
-      <option value="2">Drawer 2</option>
-      <option value="3">Drawer 3</option>
-      <option value="4">Drawer 4</option>
+
+    <input type="number" id="sample-quantity" placeholder="Quantity *" required value="1" />
+
+    <select id="location-type" required>
+      <option value="door">Store in: Door</option>
+      <option value="rack" selected>Store in: Rack</option>
+      <option value="box">Store in: Box</option>
     </select>
 
     <!-- Tipo -->
     <select id="sample-container-type" required>
-      <option value="">Select Storage Type</option>
+      <option value="">Select Storage Type *</option>
       <option value="Bag">Bag</option>
       <option value="Box">Box</option>
-      <option value="Rack">Rack</option>
     </select>
 
-    <!-- Container detail (se não for rack) -->
-    <input type="text" id="sample-detail" placeholder="Container Detail" />
+    <input type="text" id="sample-observation" placeholder="Observation" />
+
+
 
     <!-- Rack e posição (só se for rack) -->
     <select id="sample-rack" style="display: none;">

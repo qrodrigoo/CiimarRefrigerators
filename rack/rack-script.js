@@ -29,10 +29,11 @@ const quantityInput    = document.getElementById("sample-quantity");
 const obsInput         = document.getElementById("sample-observation");
 const cancelFormBtn    = document.getElementById("cancel-form");
 
+const locationTypeSelect = document.getElementById("location-type");
 const detailInput      = document.getElementById("sample-detail");
 const sampleRackSelect = document.getElementById("sample-rack");
 const positionSelect   = document.getElementById("sample-position");
-const drawerSelect     = document.getElementById("sample-drawer");
+const doorSelect     = document.getElementById("sample-door");
 const typeSelect       = document.getElementById("sample-container-type");
 
 // Transfer
@@ -40,7 +41,7 @@ const transferModal          = document.getElementById("transfer-modal");
 const transferForm           = document.getElementById("transfer-form");
 const cancelTransferBtn      = document.getElementById("cancel-transfer");
 const fridgeSelectTransfer   = document.getElementById("transfer-fridge");
-const drawerSelectTransfer   = document.getElementById("transfer-drawer");
+const doorSelectTransfer   = document.getElementById("transfer-door");
 const typeSelectTransfer     = document.getElementById("transfer-type");
 const rackSelectTransfer     = document.getElementById("transfer-rack");
 const positionSelectTransfer = document.getElementById("transfer-position");
@@ -195,69 +196,71 @@ cancelFormBtn.onclick = () => {
 
 async function openForm(sample = null) {
   sampleFormModal.style.display = "flex";
+  
+  // Default quantity
+  quantityInput.value = (sample && sample.quantity) ? sample.quantity : 1;
 
   if (sample) {
     formTitle.textContent   = "Edit Sample";
     nameInput.value         = sample.name;
     projectInput.value      = sample.project;
-    quantityInput.value     = sample.quantity;
     obsInput.value          = sample.observation || "";
-    drawerSelect.value      = sample.drawer;
+    doorSelect.value      = sample.drawer;
     selectedSample          = sample;
-
     typeSelect.value = sample.container_type;
-    typeSelect.dispatchEvent(new Event("change"));
 
     if (sample.container_type === "Rack") {
+      locationTypeSelect.value = "rack";
       sampleRackSelect.value = sample.container_detail?.charAt(0) || "";
       positionSelect.value   = sample.container_detail?.slice(1)  || "";
-      sampleRackSelect.style.display = "block";
-      positionSelect.style.display   = "block";
-      detailInput.style.display      = "none";
+    } else if (sample.container_type === "Box") {
+      locationTypeSelect.value = "box";
+      // Note: rack view currently doesn't show registered boxes selection as easily, 
+      // but we'll add basic support if needed.
     } else {
-      detailInput.value              = sample.container_detail || "";
-      sampleRackSelect.style.display = "none";
-      positionSelect.style.display   = "none";
-      detailInput.style.display      = "block";
+      locationTypeSelect.value = "door";
     }
   } else {
     formTitle.textContent = "Add Sample";
     sampleForm.reset();
+    quantityInput.value = 1;
     selectedSample = null;
-    sampleRackSelect.style.display = "none";
-    positionSelect.style.display   = "none";
-    detailInput.style.display      = "block";
+    locationTypeSelect.value = "rack"; // Default to rack since we are in rack view
   }
+  
+  locationTypeSelect.dispatchEvent(new Event("change"));
 }
 
-typeSelect.onchange = async () => {
-  const type = typeSelect.value;
-  if (type === "Rack") {
-    sampleRackSelect.style.display = "block";
-    positionSelect.style.display   = "block";
-    detailInput.style.display      = "none";
-  } else {
-    sampleRackSelect.style.display = "none";
-    positionSelect.style.display   = "none";
-    detailInput.style.display      = "block";
-  }
+locationTypeSelect.onchange = async () => {
+  const loc = locationTypeSelect.value;
+  sampleRackSelect.style.display = (loc === "rack") ? "block" : "none";
+  positionSelect.style.display   = (loc === "rack") ? "block" : "none";
+  // detailInput.style.display is naturally handled as we removed it from HTML
 };
+
+
 
 sampleForm.onsubmit = async (e) => {
   e.preventDefault();
 
-  const type = typeSelect.value;
-  const container_detail =
-    type === "Rack"
-      ? `${sampleRackSelect.value}${positionSelect.value}`
-      : detailInput.value || null;
+  const locType = locationTypeSelect.value;
+  let final_type = typeSelect.value;
+  let container_detail = "---";
+
+  if (locType === "rack") {
+    final_type = "Rack";
+    container_detail = `${sampleRackSelect.value}${positionSelect.value}`;
+  } else if (locType === "box") {
+    final_type = "Box";
+    // box logic here
+  }
 
   const payload = {
     name:             nameInput.value,
     project:          projectInput.value,
-    drawer:           drawerSelect.value,
+    drawer:           doorSelect.value,
     quantity:         quantityInput.value,
-    container_type:   type,
+    container_type:   final_type,
     container_detail,
     observation:      obsInput.value
   };
@@ -278,7 +281,7 @@ function showSampleDetail(s) {
     <p><strong>Name:</strong> ${s.name}</p>
     <p><strong>Project:</strong> ${s.project}</p>
     <p><strong>Fridge:</strong> ${fridgeName}</p>
-    <p><strong>Drawer:</strong> ${s.drawer}</p>
+    <p><strong>Door:</strong> ${s.drawer}</p>
     <p><strong>Quantity:</strong> ${s.quantity}</p>
     <p><strong>Container Type:</strong> ${s.container_type}</p>
     <p><strong>Container Detail:</strong> ${s.container_detail}</p>
@@ -381,7 +384,7 @@ async function loadFridgesForTransfer() {
 
 fridgeSelectTransfer.onchange = async () => {
   const selectedFridgeId = fridgeSelectTransfer.value;
-  drawerSelectTransfer.innerHTML = `<option value="">Select Drawer</option>`;
+  doorSelectTransfer.innerHTML = `<option value="">Select Door</option>`;
   if (!selectedFridgeId) return;
 
   const { data } = await supabase
@@ -394,15 +397,15 @@ fridgeSelectTransfer.onchange = async () => {
   for (let i = 1; i <= count; i++) {
     const opt = document.createElement("option");
     opt.value = i;
-    opt.textContent = `Drawer ${i}`;
-    drawerSelectTransfer.appendChild(opt);
+    opt.textContent = `Door ${i}`;
+    doorSelectTransfer.appendChild(opt);
   }
 
   rackSelectTransfer.style.display    = "none";
   positionSelectTransfer.style.display = "none";
 };
 
-drawerSelectTransfer.onchange = async () => {
+doorSelectTransfer.onchange = async () => {
   if (typeSelectTransfer.value === "Rack") {
     await loadTransferRacks();
   }
@@ -422,8 +425,8 @@ typeSelectTransfer.onchange = async () => {
 
 async function loadTransferRacks() {
   const fId  = fridgeSelectTransfer.value;
-  const draw = drawerSelectTransfer.value;
-  if (!fId || !draw) return;
+  const door = doorSelectTransfer.value;
+  if (!fId || !door) return;
 
   const { data } = await supabase
     .from("racks").select("*")
@@ -448,7 +451,7 @@ transferForm.onsubmit = async (e) => {
     action_type:     "transfer",
     status:          "pending",
     target_fridge:   fridgeSelectTransfer.value,
-    target_drawer:   drawerSelectTransfer.value,
+    target_drawer:   doorSelectTransfer.value,
     target_rack:     typeSelectTransfer.value === "Rack" ? rackSelectTransfer.value    : null,
     target_position: typeSelectTransfer.value === "Rack" ? positionSelectTransfer.value : null,
     original_data:   selectedSample
