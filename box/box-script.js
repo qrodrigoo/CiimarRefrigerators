@@ -29,8 +29,9 @@ const formTitle       = document.getElementById("form-title");
 const nameInput       = document.getElementById("sample-name");
 const projectInput    = document.getElementById("sample-project");
 const quantityInput   = document.getElementById("sample-quantity");
-const obsInput        = document.getElementById("sample-observation");
-const cancelFormBtn   = document.getElementById("cancel-form");
+const typeSelect       = document.getElementById("sample-container-type");
+const obsInput         = document.getElementById("sample-observation");
+const cancelFormBtn    = document.getElementById("cancel-form");
 const showAddForm     = document.getElementById("show-add-form");
 
 // Transfer
@@ -38,7 +39,7 @@ const transferModal          = document.getElementById("transfer-modal");
 const transferForm           = document.getElementById("transfer-form");
 const cancelTransferBtn      = document.getElementById("cancel-transfer");
 const fridgeSelectTransfer   = document.getElementById("transfer-fridge");
-const transferDrawerSelect   = document.getElementById("transfer-drawer");
+const transferDoorSelect   = document.getElementById("transfer-door");
 const transferTypeSelect     = document.getElementById("transfer-type");
 const transferRackSelect     = document.getElementById("transfer-rack");
 const transferPositionSelect = document.getElementById("transfer-position");
@@ -191,16 +192,20 @@ cancelFormBtn.onclick = () => {
 };
 
 function openForm(sample = null) {
+  // Default quantity
+  quantityInput.value = (sample && sample.quantity) ? sample.quantity : 1;
+
   if (sample) {
     formTitle.textContent  = "Edit Sample";
     nameInput.value        = sample.name;
     projectInput.value     = sample.project;
-    quantityInput.value    = sample.quantity;
     obsInput.value         = sample.observation || "";
+    typeSelect.value       = sample.container_type === "Box" ? "Box" : sample.container_type;
     selectedSample         = sample;
   } else {
     formTitle.textContent = "Add Sample";
     sampleForm.reset();
+    quantityInput.value = 1;
     selectedSample = null;
   }
   sampleFormModal.style.display = "flex";
@@ -214,7 +219,7 @@ sampleForm.onsubmit = async (e) => {
     project: projectInput.value,
     quantity: quantityInput.value,
     observation: obsInput.value || "---",
-    container_type: "Box",
+    container_type: "Box", // System logic for Box view
     container_detail: box.name,
     box_name: box.name,
     drawer: box.drawer,
@@ -240,7 +245,7 @@ function showSampleDetail(s) {
     <p><strong>Name:</strong> ${s.name}</p>
     <p><strong>Project:</strong> ${s.project}</p>
     <p><strong>Fridge:</strong> ${fridgeName}</p>
-    <p><strong>Drawer:</strong> ${s.drawer}</p>
+    <p><strong>Door:</strong> ${s.drawer}</p>
     <p><strong>Box:</strong> ${box.name}</p>
     <p><strong>Quantity:</strong> ${s.quantity}</p>
     <p><strong>Observation:</strong> ${s.observation}</p>
@@ -288,7 +293,7 @@ async function loadBox() {
 
   boxInfo.innerHTML = `
     <span class="info-badge">📦 Box ${box.name}</span>
-    <span class="info-badge">🗂️ Drawer ${box.drawer}</span>
+    <span class="info-badge">🗂️ Door ${box.drawer}</span>
     <span class="info-badge">❄️ ${fridgeName}</span>
   `;
 }
@@ -337,7 +342,7 @@ async function loadFridgesForTransfer() {
 
 fridgeSelectTransfer.onchange = async () => {
   const selectedFridgeId = fridgeSelectTransfer.value;
-  transferDrawerSelect.innerHTML = `<option value="">Select Drawer</option>`;
+  transferDoorSelect.innerHTML = `<option value="">Select Door</option>`;
   if (!selectedFridgeId) return;
 
   const { data } = await supabase
@@ -350,8 +355,8 @@ fridgeSelectTransfer.onchange = async () => {
   for (let i = 1; i <= count; i++) {
     const opt = document.createElement("option");
     opt.value = i;
-    opt.textContent = `Drawer ${i}`;
-    transferDrawerSelect.appendChild(opt);
+    opt.textContent = `Door ${i}`;
+    transferDoorSelect.appendChild(opt);
   }
 
   transferRackSelect.style.display    = "none";
@@ -359,7 +364,7 @@ fridgeSelectTransfer.onchange = async () => {
   transferBoxSelect.style.display     = "none";
 };
 
-transferDrawerSelect.onchange = async () => {
+transferDoorSelect.onchange = async () => {
   if (transferTypeSelect.value === "Rack") {
     await loadTransferRacks();
   } else if (transferTypeSelect.value === "Box") {
@@ -385,9 +390,9 @@ transferTypeSelect.onchange = async () => {
 
 async function loadTransferRacks() {
   const fId  = fridgeSelectTransfer.value;
-  const draw = transferDrawerSelect.value;
-  if (!fId || !draw) return;
-  const { data } = await supabase.from("racks").select("*").eq("refrigerator_id", fId).eq("drawer", draw);
+  const door = transferDoorSelect.value;
+  if (!fId || !door) return;
+  const { data } = await supabase.from("racks").select("*").eq("refrigerator_id", fId).eq("drawer", door);
   transferRackSelect.innerHTML = `<option value="">Select Rack</option>`;
   (data || []).forEach(r => {
     const opt = document.createElement("option");
@@ -399,9 +404,9 @@ async function loadTransferRacks() {
 
 async function loadTransferBoxes() {
   const fId  = fridgeSelectTransfer.value;
-  const draw = transferDrawerSelect.value;
-  if (!fId || !draw) return;
-  const { data } = await supabase.from("boxes").select("*").eq("refrigerator_id", fId).eq("drawer", draw);
+  const door = transferDoorSelect.value;
+  if (!fId || !door) return;
+  const { data } = await supabase.from("boxes").select("*").eq("refrigerator_id", fId).eq("drawer", door);
   transferBoxSelect.innerHTML = `<option value="">Select Box</option>`;
   (data || []).forEach(b => {
     const opt = document.createElement("option");
@@ -421,7 +426,7 @@ transferForm.onsubmit = async (e) => {
     action_type: "transfer",
     status: "pending",
     target_fridge: fridgeSelectTransfer.value,
-    target_drawer: transferDrawerSelect.value,
+    target_drawer: transferDoorSelect.value,
     target_rack:     type === "Rack" ? transferRackSelect.value    : null,
     target_position: type === "Rack" ? transferPositionSelect.value : null,
     original_data: selectedSample

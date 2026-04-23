@@ -41,12 +41,17 @@
   <div class="modal-overlay" id="sample-form-modal">
     <form class="modal-form" id="sample-form">
       <h2 id="form-title">Add Sample</h2>
-      <input type="text"   id="sample-name"        placeholder="Name *" required />
+      <input type="text"   id="sample-name"        placeholder="Description *" required />
       <div class="project-autocomplete">
         <input type="text"   id="sample-project"      placeholder="Project *" required autocomplete="off" />
         <ul class="project-dropdown" id="project-dropdown"></ul>
       </div>
-      <input type="number" id="sample-quantity"     placeholder="Quantity *" required />
+      <input type="number" id="sample-quantity"     placeholder="Quantity *" required value="1" />
+      <select id="sample-container-type" required>
+        <option value="">Select Storage Type *</option>
+        <option value="Bag">Bag</option>
+        <option value="Box">Box</option>
+      </select>
       <input type="text"   id="sample-observation"  placeholder="Observation" />
       <div class="modal-actions">
         <button type="button" class="cancel" id="cancel-form">Cancel</button>
@@ -64,8 +69,8 @@
         <option value="">Select Fridge</option>
       </select>
 
-      <select id="transfer-drawer" required>
-        <option value="">Select Drawer</option>
+      <select id="transfer-door" required>
+        <option value="">Select Door</option>
       </select>
 
       <select id="transfer-type" required>
